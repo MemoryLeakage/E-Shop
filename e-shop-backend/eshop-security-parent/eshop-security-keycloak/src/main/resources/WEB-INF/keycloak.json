@@ -1,0 +1,18 @@
+{
+  "realm" : "eshop",
+  "resource" : "eshop-ui",
+  "auth-server-url" : "http://localhost:8080/auth",
+  "ssl-required" : "external",
+  "use-resource-role-mappings" : false,
+  "enable-cors" : true,
+  "cors-max-age" : 1000,
+  "cors-allowed-methods" : "POST, PUT, DELETE, GET",
+  "cors-exposed-headers" : "WWW-Authenticate",
+  "bearer-only" : true,
+  "enable-basic-auth" : false,
+  "expose-token" : true,
+  "verify-token-audience" : true,
+  "connection-pool-size" : 20,
+  "disable-trust-manager": false,
+  "allow-any-hostname" : false
+}

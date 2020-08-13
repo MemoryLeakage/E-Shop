@@ -16,6 +16,8 @@
 
     <modules>
         <module>eshop-app</module>
+        <module>eshop-security</module>
+        <module>eshop-security-keycloak</module>
     </modules>
     <packaging>pom</packaging>
 
