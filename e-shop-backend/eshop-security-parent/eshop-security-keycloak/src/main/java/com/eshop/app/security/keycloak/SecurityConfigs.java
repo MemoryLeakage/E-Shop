@@ -47,8 +47,7 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/ping").authenticated()
-                .anyRequest().permitAll();
+                .anyRequest().denyAll();
     }
 
     @Override
