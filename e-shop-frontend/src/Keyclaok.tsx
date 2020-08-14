@@ -1,4 +1,4 @@
-import Keycloak, {KeycloakAdapter, KeycloakInitOptions, KeycloakInstance, KeycloakLoginOptions} from 'keycloak-js'
+import Keycloak, {KeycloakInitOptions, KeycloakInstance} from 'keycloak-js'
 
 let keycloakInstance: KeycloakInstance = initKeycloakInstance();
 
