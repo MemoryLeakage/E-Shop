@@ -28,3 +28,8 @@ services:
         - 8080:8080
       depends_on:
         - postgres
+  frontend:
+      build:
+        context: e-shop-frontend
+      ports:
+      - 3000:80
