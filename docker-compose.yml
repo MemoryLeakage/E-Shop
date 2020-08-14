@@ -28,3 +28,10 @@ services:
         - 8080:8080
       depends_on:
         - postgres
+  app:
+    build:
+      context: e-shop-backend
+    ports:
+    - 9090:9090
+    depends_on:
+      - keycloak
