@@ -17,6 +17,9 @@
     <modules>
         <module>eshop-security-parent</module>
         <module>eshop-app</module>
+        <module>eshop-controllers</module>
+        <module>eshop-business-logic</module>
+        <module>eshop-services-parent</module>
     </modules>
     <packaging>pom</packaging>
 
