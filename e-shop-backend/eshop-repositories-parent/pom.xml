@@ -11,6 +11,16 @@
 
     <artifactId>eshop-repositories-parent</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>eshop-repositories</module>
+    </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-models</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
