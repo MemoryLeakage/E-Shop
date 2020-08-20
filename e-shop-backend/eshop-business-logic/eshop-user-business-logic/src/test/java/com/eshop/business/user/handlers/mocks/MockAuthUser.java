@@ -1,4 +1,4 @@
-package com.eshop.business.product.handlers.mocks;
+package com.eshop.business.user.handlers.mocks;
 
 import com.eshop.models.entities.User;
 import com.eshop.security.AuthenticatedUser;
@@ -6,9 +6,11 @@ import com.eshop.security.AuthenticatedUser;
 public class MockAuthUser implements AuthenticatedUser {
 
     private final User user;
+    private final String[] roles;
 
-    public MockAuthUser(User user) {
+    public MockAuthUser(User user, String[] roles) {
         this.user = user;
+        this.roles = roles;
     }
 
     @Override
@@ -18,6 +20,6 @@ public class MockAuthUser implements AuthenticatedUser {
 
     @Override
     public String[] getRoles() {
-        return new String[0];
+        return roles;
     }
 }
