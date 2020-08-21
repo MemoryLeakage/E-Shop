@@ -2,31 +2,31 @@ package com.eshop.business.user.handlers;
 
 import com.eshop.business.user.responses.GetUserInfoResponse;
 import com.eshop.models.entities.User;
-import com.eshop.security.AuthenticatedUser;
+import com.eshop.security.SecurityContext;
 
 public class GetUserInfoHandler {
 
-    private final AuthenticatedUser authenticatedUser;
+    private final SecurityContext securityContext;
 
-    public GetUserInfoHandler(AuthenticatedUser authenticatedUser) {
-        validateNotNull(authenticatedUser, "authenticated user cannot be null");
-        this.authenticatedUser = authenticatedUser;
+    public GetUserInfoHandler(SecurityContext securityContext) {
+        validateNotNull(securityContext, "authenticated user cannot be null");
+        this.securityContext = securityContext;
     }
 
-    private void validateNotNull(AuthenticatedUser authenticatedUser, String message) {
-        if (authenticatedUser == null)
+    private void validateNotNull(SecurityContext securityContext, String message) {
+        if (securityContext == null)
             throw new IllegalArgumentException(message);
     }
 
     public GetUserInfoResponse handle() {
-        User user = authenticatedUser.getUser();
+        User user = securityContext.getUser();
         return new GetUserInfoResponse.Builder()
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .rate(user.getRating())
-                .roles(authenticatedUser.getRoles())
+                .roles(securityContext.getRoles())
                 .build();
     }
 }

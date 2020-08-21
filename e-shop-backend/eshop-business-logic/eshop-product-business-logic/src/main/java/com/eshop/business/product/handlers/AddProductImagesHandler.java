@@ -4,7 +4,7 @@ import com.eshop.business.product.requests.AddProductImagesRequest;
 import com.eshop.business.product.responses.AddProductImagesResponse;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.ProductRepository;
-import com.eshop.security.AuthenticatedUser;
+import com.eshop.security.SecurityContext;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -16,19 +16,19 @@ import static com.eshop.business.product.handlers.Validators.validateNotNull;
 public class AddProductImagesHandler {
 
     private ProductRepository productRepository;
-    private AuthenticatedUser authenticatedUser;
+    private SecurityContext securityContext;
     private Path imagesPath;
 
-    public AddProductImagesHandler( AuthenticatedUser authenticatedUser,
+    public AddProductImagesHandler( SecurityContext securityContext,
                                     ProductRepository productRepository,
                                     Path imagesPath) {
-        validateNotNull(authenticatedUser, "authenticated user");
+        validateNotNull(securityContext, "security context");
         validateNotNull(productRepository, "product repository");
         validateNotNull(imagesPath, "images path");
         this.imagesPath = imagesPath;
         createFolderIfNotExist(imagesPath);
         this.productRepository = productRepository;
-        this.authenticatedUser = authenticatedUser;
+        this.securityContext = securityContext;
     }
 
     private void createFolderIfNotExist(Path imagesPath) {
@@ -46,7 +46,7 @@ public class AddProductImagesHandler {
         validateNotNull(request.getImages(), "images");
         User owner = productRepository.getOwnerById(request.getProductId());
 
-        if(!owner.equals(authenticatedUser.getUser())){
+        if(!owner.equals(securityContext.getUser())){
             throw new IllegalStateException("not the owner");
         }
 

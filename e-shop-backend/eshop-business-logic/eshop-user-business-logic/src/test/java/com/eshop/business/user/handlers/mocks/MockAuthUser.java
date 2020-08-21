@@ -1,9 +1,9 @@
 package com.eshop.business.user.handlers.mocks;
 
 import com.eshop.models.entities.User;
-import com.eshop.security.AuthenticatedUser;
+import com.eshop.security.SecurityContext;
 
-public class MockAuthUser implements AuthenticatedUser {
+public class MockAuthUser implements SecurityContext {
 
     private final User user;
     private final String[] roles;

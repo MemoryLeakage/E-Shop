@@ -10,7 +10,6 @@ import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.Category;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
-import com.eshop.security.AuthenticatedUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +45,7 @@ public class AddProductImagesHandlerTest {
 
         NullPointerException thrown = assertThrows(NullPointerException.class,
                 () -> new AddProductImagesHandler(null, productRepo, imagesPath));
-        assertEquals("authenticated user can not be null", thrown.getMessage());
+        assertEquals("security context can not be null", thrown.getMessage());
         thrown = assertThrows(NullPointerException.class,
                 () -> new AddProductImagesHandler(authenticatedUser, null, imagesPath));
 

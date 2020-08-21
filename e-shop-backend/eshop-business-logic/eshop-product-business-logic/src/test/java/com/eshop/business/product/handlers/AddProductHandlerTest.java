@@ -10,7 +10,7 @@ import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.Category;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
-import com.eshop.security.AuthenticatedUser;
+import com.eshop.security.SecurityContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ public class AddProductHandlerTest {
     void givenNullConstructorArg_whenConstructing_thenThrowException() {
         NullPointerException thrown = assertThrows(NullPointerException.class,
                 () -> new AddProductHandler(null, productRepo));
-        assertEquals("authenticated user can not be null", thrown.getMessage());
+        assertEquals("security context can not be null", thrown.getMessage());
 
         thrown = assertThrows(NullPointerException.class,
                 () -> new AddProductHandler(authenticatedUser, null));
@@ -78,8 +78,8 @@ public class AddProductHandlerTest {
 
     @Test
     void givenNullAuthenticated_whenAddingProduct_thenThrowException() {
-        AuthenticatedUser authenticatedUser = new MockAuthUser(null);
-        AddProductHandler addProductHandler = new AddProductHandler(authenticatedUser, this.productRepo);
+        SecurityContext securityContext = new MockAuthUser(null);
+        AddProductHandler addProductHandler = new AddProductHandler(securityContext, this.productRepo);
         IllegalStateException thrown = assertThrows(IllegalStateException.class,
                 () -> addProductHandler.handle(getValidRequestBuilder().build()));
         assertEquals("user is not authenticated", thrown.getMessage());

@@ -5,7 +5,7 @@ import com.eshop.business.product.responses.AddProductResponse;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.ProductRepository;
-import com.eshop.security.AuthenticatedUser;
+import com.eshop.security.SecurityContext;
 import static com.eshop.business.product.handlers.Validators.validateMoreThanZero;
 import static com.eshop.business.product.handlers.Validators.validateNotNull;
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
@@ -13,18 +13,18 @@ import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
 public class AddProductHandler {
 
     private ProductRepository productRepository;
-    private AuthenticatedUser authenticatedUser;
+    private SecurityContext securityContext;
 
-    public AddProductHandler(AuthenticatedUser authenticatedUser, ProductRepository repository) {
-        validateNotNull(authenticatedUser, "authenticated user");
+    public AddProductHandler(SecurityContext securityContext, ProductRepository repository) {
+        validateNotNull(securityContext, "security context");
         validateNotNull(repository, "product repository");
-        this.authenticatedUser = authenticatedUser;
+        this.securityContext = securityContext;
         productRepository = repository;
     }
 
     public AddProductResponse handle(AddProductRequest request) {
         validateRequest(request);
-        User user = authenticatedUser.getUser();
+        User user = securityContext.getUser();
         validateUser(user);
         Product product = buildProduct(request, user);
         product = productRepository.addProduct(product);
