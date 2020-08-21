@@ -21,6 +21,30 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Float getRating() {
+        return rating;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
     public static class Builder {
         private String email;
         private String username;

@@ -6,10 +6,8 @@ import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.AuthenticatedUser;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
+import static com.eshop.business.product.handlers.Validators.validateMoreThanZero;
+import static com.eshop.business.product.handlers.Validators.validateNotNull;
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
 
 public class AddProductHandler {
@@ -65,29 +63,6 @@ public class AddProductHandler {
         validateMoreThanZero(request.getPrice(), "price");
     }
 
-    private void validateMoreThanZero(double number, String name) {
-        String message = name + " has to be greater than 0";
-        validate(n->n<=0,
-                IllegalArgumentException::new,
-                message,
-                number);
-    }
-
-    private void validateNotNull(Object object, String name) {
-        String message = name + " can not be null";
-        validate(Objects::isNull,
-                NullPointerException::new,
-                message,
-                object);
-    }
-
-    private <T> void validate(Predicate<T> predicate,
-                              Function<String, RuntimeException> exceptionSupplier,
-                              String message, T testSubject) {
-        if (predicate.test(testSubject))
-            throw exceptionSupplier.apply(message);
-
-    }
 
 
 }

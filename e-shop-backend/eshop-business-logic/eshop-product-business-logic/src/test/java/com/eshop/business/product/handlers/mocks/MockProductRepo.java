@@ -1,6 +1,7 @@
 package com.eshop.business.product.handlers.mocks;
 
 import com.eshop.models.entities.Product;
+import com.eshop.models.entities.User;
 import com.eshop.repositories.ProductRepository;
 
 import java.util.ArrayList;
@@ -18,6 +19,23 @@ public class MockProductRepo implements ProductRepository {
     public Product addProduct(Product product) {
         product = addIdAndGetProduct(product);
         products.add(product);
+        return product;
+    }
+
+    @Override
+    public User getOwnerById(long id) {
+        return products.stream().filter(product -> product.getId() == id).map(Product::getOwner).findAny().orElseThrow();
+    }
+
+    @Override
+    public String getProductNameById(long productId) {
+        return getProductById(productId).getProductName();
+    }
+
+    @Override
+    public Product updateImageUrlById(long productId, String imgUrl) {
+        Product product = getProductById(productId);
+        product.setImgUrl(imgUrl);
         return product;
     }
 
