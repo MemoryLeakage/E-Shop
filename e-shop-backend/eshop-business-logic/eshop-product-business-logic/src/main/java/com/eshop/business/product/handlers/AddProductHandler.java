@@ -6,7 +6,8 @@ import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.AuthenticatedUser;
-
+import static com.eshop.business.product.handlers.Validators.validateMoreThanZero;
+import static com.eshop.business.product.handlers.Validators.validateNotNull;
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
 
 public class AddProductHandler {
@@ -35,17 +36,17 @@ public class AddProductHandler {
 
     private Product buildProduct(AddProductRequest request, User user) {
         return new Product.Builder()
-                    .productName(request.getProductName())
-                    .availabilityState(AVAILABLE)
-                    .description(request.getDescription())
-                    .price(request.getPrice())
-                    .rating(null)
-                    .soldQuantity(0)
-                    .availableQuantity(request.getAvailableQuantity())
-                    .imgUrl(null)
-                    .owner(user)
-                    .category(request.getCategory())
-                    .build();
+                .productName(request.getProductName())
+                .availabilityState(AVAILABLE)
+                .description(request.getDescription())
+                .price(request.getPrice())
+                .rating(null)
+                .soldQuantity(0)
+                .availableQuantity(request.getAvailableQuantity())
+                .imgUrl(null)
+                .owner(user)
+                .category(request.getCategory())
+                .build();
     }
 
     private void validateUser(User user) {
@@ -62,15 +63,6 @@ public class AddProductHandler {
         validateMoreThanZero(request.getPrice(), "price");
     }
 
-    private void validateMoreThanZero(double number, String name) {
-        if (number <= 0)
-            throw new IllegalArgumentException(name + " has to be greater than 0");
-    }
-
-    private void validateNotNull(Object object, String message) {
-        if (object == null)
-            throw new NullPointerException(message + " can not be null");
-    }
 
 
 }

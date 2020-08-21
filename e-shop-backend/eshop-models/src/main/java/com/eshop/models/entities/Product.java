@@ -81,6 +81,10 @@ public class Product {
         return description;
     }
 
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
     public static class Builder{
         private Long id;
         private String productName;
