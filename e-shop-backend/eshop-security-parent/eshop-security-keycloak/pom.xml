@@ -26,5 +26,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-repositires</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
