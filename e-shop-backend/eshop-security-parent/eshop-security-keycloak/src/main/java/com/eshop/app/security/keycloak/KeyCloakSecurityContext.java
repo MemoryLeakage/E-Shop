@@ -4,26 +4,28 @@ import com.eshop.models.entities.User;
 import com.eshop.repositories.UserRepository;
 import com.eshop.security.SecurityContext;
 import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.AdapterDeploymentContext;
+import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:security.properties")
 public class KeyCloakSecurityContext implements SecurityContext {
 
     private final UserRepository userRepository;
+    private final KeycloakDeployment keycloakDeployment;
     private Authentication authentication;
 
-    @Value("${keycloak.resource}")
     private String keycloakResourceName;
 
-    public KeyCloakSecurityContext(UserRepository userRepository) {
+    @Autowired
+    public KeyCloakSecurityContext(UserRepository userRepository, AdapterDeploymentContext adapterDeploymentContext) {
         this.userRepository = userRepository;
+        this.keycloakDeployment = adapterDeploymentContext.resolveDeployment(null);
     }
 
     @Override
@@ -71,6 +73,6 @@ public class KeyCloakSecurityContext implements SecurityContext {
         if (isNotKeycloakAuthentication())
             return null;
         AccessToken accessToken = getAccessToken();
-        return (String[]) accessToken.getResourceAccess(keycloakResourceName).getRoles().toArray();
+        return (String[]) accessToken.getResourceAccess(keycloakDeployment.getResourceName()).getRoles().toArray();
     }
 }
