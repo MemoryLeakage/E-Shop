@@ -20,8 +20,6 @@ public class KeyCloakSecurityContext implements SecurityContext {
     private final KeycloakDeployment keycloakDeployment;
     private Authentication authentication;
 
-    private String keycloakResourceName;
-
     @Autowired
     public KeyCloakSecurityContext(UserRepository userRepository, AdapterDeploymentContext adapterDeploymentContext) {
         this.userRepository = userRepository;
