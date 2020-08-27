@@ -3,6 +3,7 @@ package com.eshop.models.entities;
 import com.eshop.models.constants.ProductAvailabilityState;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -32,6 +33,9 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "FK_user_id", referencedColumnName = "id")
     private User owner;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<Image> images;
 
     private Category category;
 
@@ -85,6 +89,10 @@ public class Product {
         this.imgUrl = imgUrl;
     }
 
+    public List<Image> getImages() {
+        return images;
+    }
+
     public static class Builder{
         private Long id;
         private String productName;
@@ -97,6 +105,7 @@ public class Product {
         private String description;
         private User owner;
         private Category category;
+        private List<Image> images;
 
         public Builder id(Long id) {
             this.id = id;
@@ -153,6 +162,11 @@ public class Product {
             return this;
         }
 
+        public Builder images(List<Image> images) {
+            this.images = images;
+            return this;
+        }
+
         public Product build(){
             Product product = new Product();
             product.availabilityState = this.availabilityState;
@@ -166,6 +180,7 @@ public class Product {
             product.owner = this.owner;
             product.id = this.id;
             product.category = this.category;
+            product.images = this.images;
             return product;
         }
     }

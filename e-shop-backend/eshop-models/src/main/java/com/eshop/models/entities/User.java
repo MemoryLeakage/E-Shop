@@ -1,6 +1,7 @@
 package com.eshop.models.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -20,6 +21,9 @@ public class User {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    private List<Product> products;
 
     public Long getId() {
         return id;
