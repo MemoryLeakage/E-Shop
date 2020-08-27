@@ -1,7 +1,6 @@
 package com.eshop.app.security.keycloak;
 
 import com.eshop.models.entities.User;
-import com.eshop.repositories.UserRepository;
 import com.eshop.security.SecurityContext;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.AdapterDeploymentContext;
@@ -16,13 +15,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyCloakSecurityContext implements SecurityContext {
 
-    private final UserRepository userRepository;
     private final KeycloakDeployment keycloakDeployment;
     private Authentication authentication;
 
     @Autowired
-    public KeyCloakSecurityContext(UserRepository userRepository, AdapterDeploymentContext adapterDeploymentContext) {
-        this.userRepository = userRepository;
+    public KeyCloakSecurityContext(AdapterDeploymentContext adapterDeploymentContext) {
         this.keycloakDeployment = adapterDeploymentContext.resolveDeployment(null);
     }
 
@@ -32,16 +29,12 @@ public class KeyCloakSecurityContext implements SecurityContext {
         if (isNotKeycloakAuthentication())
             return null;
         AccessToken accessToken = getAccessToken();
-        User user = new User.Builder()
+        return new User.Builder()
                 .firstName(accessToken.getGivenName())
                 .lastName(accessToken.getFamilyName())
                 .email(accessToken.getEmail())
                 .username(accessToken.getPreferredUsername())
                 .build();
-        if (!userRepository.existsByUserName(user.getUsername())) {
-            userRepository.addUser(user);
-        }
-        return user;
     }
 
     private void initializeAuthentication() {
