@@ -2,6 +2,7 @@ package com.eshop.models.entities;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "user")
@@ -49,6 +50,19 @@ public class User {
         return lastName;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(username, user.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(username);
+    }
+
     public static class Builder {
         private String email;
         private String username;
@@ -81,7 +95,7 @@ public class User {
             return this;
         }
 
-        public User build(){
+        public User build() {
             User user = new User();
             user.email = this.email;
             user.firstName = this.firstName;
