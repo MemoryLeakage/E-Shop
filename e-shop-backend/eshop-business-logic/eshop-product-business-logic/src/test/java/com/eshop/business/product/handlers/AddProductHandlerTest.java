@@ -3,7 +3,6 @@ package com.eshop.business.product.handlers;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
-import com.eshop.business.product.handlers.mocks.MockAuthUser;
 import com.eshop.business.product.requests.AddProductRequest;
 import com.eshop.business.product.responses.AddProductResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
@@ -29,12 +28,12 @@ public class AddProductHandlerTest {
     @Mock
     private ProductRepository productRepo;
     @Mock
-    private SecurityContext authenticatedUser;
+    private SecurityContext securityContext;
     private AddProductHandler productHandler;
 
     @BeforeEach
     void setUp() {
-        this.productHandler = new AddProductHandler(authenticatedUser, productRepo);
+        this.productHandler = new AddProductHandler(securityContext, productRepo);
     }
 
     @Test
@@ -44,7 +43,7 @@ public class AddProductHandlerTest {
         assertEquals("security context can not be null", thrown.getMessage());
 
         thrown = assertThrows(NullPointerException.class,
-                () -> new AddProductHandler(authenticatedUser, null));
+                () -> new AddProductHandler(securityContext, null));
 
         assertEquals("product repository can not be null", thrown.getMessage());
 
@@ -87,7 +86,7 @@ public class AddProductHandlerTest {
 
     @Test
     void givenNullAuthenticated_whenAddingProduct_thenThrowException() {
-        SecurityContext securityContext = new MockAuthUser(null);
+        Mockito.when(securityContext.getUser()).thenReturn(null);
         AddProductHandler addProductHandler = new AddProductHandler(securityContext, this.productRepo);
         IllegalStateException thrown = assertThrows(IllegalStateException.class,
                 () -> addProductHandler.handle(getValidRequestBuilder().build()));
@@ -100,13 +99,15 @@ public class AddProductHandlerTest {
 
         AddProductRequest request = getValidRequestBuilder().build();
         AddProductResponse response = productHandler.handle(request);
+        Mockito.verify(productRepo,Mockito.times(1)).addProduct(any(Product.class));
+        Mockito.verify(securityContext,Mockito.times(1)).getUser();
         validateResponse(request, response);
         validateAddedProduct(request, response);
     }
 
     private void prepareMock() {
         List<Product> products = new ArrayList<>();
-        Mockito.when(authenticatedUser.getUser()).thenReturn(getUser("test-user"));
+        Mockito.when(securityContext.getUser()).thenReturn(getUser("test-user"));
         Mockito.when(productRepo.addProduct(any(Product.class)))
                 .thenAnswer(invocation -> {
                     Product product = invocation.getArgument(0);
@@ -132,7 +133,7 @@ public class AddProductHandlerTest {
         assertEquals(ProductAvailabilityState.AVAILABLE, product.getAvailabilityState());
         assertNull(product.getImgUrl());
         assertNull(product.getRating());
-        assertEquals(authenticatedUser.getUser(), product.getOwner());
+        assertEquals(securityContext.getUser(), product.getOwner());
     }
 
     private void validateResponse(AddProductRequest request, AddProductResponse response) {
