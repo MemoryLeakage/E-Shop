@@ -1,30 +1,39 @@
 package com.eshop.business.product.handlers;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 
 import com.eshop.business.product.handlers.mocks.MockAuthUser;
-import com.eshop.business.product.handlers.mocks.MockProductRepo;
 import com.eshop.business.product.requests.AddProductRequest;
 import com.eshop.business.product.responses.AddProductResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.Category;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
+import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@ExtendWith(MockitoExtension.class)
 public class AddProductHandlerTest {
 
 
-    private MockProductRepo productRepo;
-    private MockAuthUser authenticatedUser;
+    @Mock
+    private ProductRepository productRepo;
+    @Mock
+    private SecurityContext authenticatedUser;
     private AddProductHandler productHandler;
 
     @BeforeEach
     void setUp() {
-        this.authenticatedUser = new MockAuthUser(getUser("test-user"));
-        this.productRepo = new MockProductRepo();
         this.productHandler = new AddProductHandler(authenticatedUser, productRepo);
     }
 
@@ -87,10 +96,28 @@ public class AddProductHandlerTest {
 
     @Test
     void givenValidRequest_whenAddingProduct_thenAdd() {
+        prepareMock();
+
         AddProductRequest request = getValidRequestBuilder().build();
         AddProductResponse response = productHandler.handle(request);
         validateResponse(request, response);
         validateAddedProduct(request, response);
+    }
+
+    private void prepareMock() {
+        List<Product> products = new ArrayList<>();
+        Mockito.when(authenticatedUser.getUser()).thenReturn(getUser("test-user"));
+        Mockito.when(productRepo.addProduct(any(Product.class)))
+                .thenAnswer(invocation -> {
+                    Product product = invocation.getArgument(0);
+                    product = addIdAndGetProduct(product, products.size());
+                    products.add(product);
+                    return product;
+                });
+        Mockito.when(productRepo.getProductById(anyLong())).thenAnswer(invocation -> {
+            Long id = invocation.getArgument(0);
+            return products.stream().filter(product -> product.getId().equals(id)).findAny().orElseThrow();
+        });
     }
 
     private void validateAddedProduct(AddProductRequest request, AddProductResponse response) {
@@ -102,7 +129,7 @@ public class AddProductHandlerTest {
         assertEquals(request.getCategory(), product.getCategory());
         assertEquals(request.getDescription(), product.getDescription());
         assertEquals(0, product.getSoldQuantity());
-        assertEquals(ProductAvailabilityState.AVAILABLE,product.getAvailabilityState());
+        assertEquals(ProductAvailabilityState.AVAILABLE, product.getAvailabilityState());
         assertNull(product.getImgUrl());
         assertNull(product.getRating());
         assertEquals(authenticatedUser.getUser(), product.getOwner());
@@ -110,7 +137,7 @@ public class AddProductHandlerTest {
 
     private void validateResponse(AddProductRequest request, AddProductResponse response) {
         assertEquals(request.getPrice(), response.getPrice());
-        assertEquals(request.getProductName(),response.getProductName());
+        assertEquals(request.getProductName(), response.getProductName());
         assertEquals(request.getAvailableQuantity(), response.getInStock());
     }
 
@@ -133,4 +160,20 @@ public class AddProductHandlerTest {
                 .username(username).build();
     }
 
+    private Product addIdAndGetProduct(Product product, long id) {
+        product = new Product.Builder()
+                .category(product.getCategory())
+                .owner(product.getOwner())
+                .availabilityState(product.getAvailabilityState())
+                .availableQuantity(product.getAvailableQuantity())
+                .description(product.getDescription())
+                .imgUrl(product.getImgUrl())
+                .price(product.getPrice())
+                .productName(product.getProductName())
+                .rating(product.getRating())
+                .soldQuantity(product.getSoldQuantity())
+                .id(id)
+                .build();
+        return product;
+    }
 }

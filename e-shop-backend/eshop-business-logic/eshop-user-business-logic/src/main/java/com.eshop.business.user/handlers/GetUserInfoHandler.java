@@ -9,7 +9,7 @@ public class GetUserInfoHandler {
     private final SecurityContext securityContext;
 
     public GetUserInfoHandler(SecurityContext securityContext) {
-        validateNotNull(securityContext, "authenticated user cannot be null");
+        validateNotNull(securityContext, "security context cannot be null");
         this.securityContext = securityContext;
     }
 
