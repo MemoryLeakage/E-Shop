@@ -3,8 +3,10 @@ package com.eshop.business.product.handlers;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.eshop.business.product.requests.AddProductImagesRequest;
+import com.eshop.business.product.responses.AddProductImagesResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.Category;
+import com.eshop.models.entities.Image;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.ImageRepository;
@@ -16,12 +18,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -93,9 +98,9 @@ public class AddProductImagesHandlerTest {
     }
 
     @Test
-    void givenNullRequestFields_whenAddingImages_thenThrowException() {
+    void givenRequestWithOneOrMoreOfNullImages_whenAddingImages_thenThrowException() {
         when(securityContext.getUser()).thenReturn(getUser("test-user"));
-        when(productRepository.getOwnerById(1)).thenReturn(getUser("test-user"));
+        when(productRepository.getProductById(1)).thenReturn(getProduct("test-user"));
 
         List<AddProductImagesRequest.Image> images = Arrays.asList(null, null);
         AddProductImagesRequest request = new AddProductImagesRequest(images, 1);
@@ -108,7 +113,7 @@ public class AddProductImagesHandlerTest {
     @Test
     void givenCurrentAuthenticatedUserNotEqualOwner_whenAddingImages_thenThrowException() {
         when(securityContext.getUser()).thenReturn(getUser("ANOTHER_USER"));
-        when(productRepository.getOwnerById(1)).thenReturn(getUser("test-user"));
+        when(productRepository.getProductById(1)).thenReturn(getProduct("test-user"));
         AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
         IllegalStateException thrown = assertThrows(IllegalStateException.class,
                 () -> handler.handle(getAddImageRequest()));
@@ -118,7 +123,8 @@ public class AddProductImagesHandlerTest {
     @Test
     void givenImagesExceedMaxNumberOfAllowedImages_whenAdding_thenThrowException() {
         when(securityContext.getUser()).thenReturn(getUser("test-user"));
-        when(productRepository.getOwnerById(1)).thenReturn(getUser("test-user"));
+        when(productRepository.getProductById(1)).thenReturn(getProduct("test-user"));
+        when(imageRepository.getImagesCountByProductId(1)).thenReturn(6);
         AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
         AddProductImagesRequest request = getAddImageRequest(image1, image2, image1);
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> handler.handle(request));
@@ -126,38 +132,71 @@ public class AddProductImagesHandlerTest {
     }
 
     @Test
-    void givenValidRequestAndImages_whenAdding_thenBehaveAsExpected() {
-        // TODO
-//        when(securityContext.getUser()).thenReturn(getUser("test-user"));
-//        AddProductImagesRequest request = getAddImageRequest();
-//        AddProductImagesResponse response = productImageHandler.handle(request);
-//        assertEquals(request.getImages().size(), response.getAddedImagesCount());
-//
-//        String expectedName = String.format("%s %s",
-//                securityContext.getUser().getFirstName(),
-//                securityContext.getUser().getLastName());
-//
-//        assertEquals(expectedName, response.getOwnerFullName());
-//        Product product = productRepository.getProductById(1);
-//        Path imagesDirectory = imagesPath.resolve(Long.toString(product.getId()));
-//        assertEquals(imagesDirectory.toAbsolutePath().toString(),
-//                product.getImgUrl());
-//        assertEquals(product.getProductName(), response.getProductName());
-//
-//        String image1Name = String.format("%d.%s", 0, image1.getImageType());
-//        String image2Name = String.format("%d.%s", 1, image2.getImageType());
-//        Path image1Path = imagesDirectory.resolve(image1Name);
-//        Path image2Path = imagesDirectory.resolve(image2Name);
-//
-//        assertTrue(Files.exists(image1Path));
-//        assertTrue(Files.exists(image2Path));
-//
-//        validateImageContents(image1Path, image1);
-//        validateImageContents(image2Path, image2);
+    void givenValidRequestAndImagesForProductHasNoImages_whenAdding_thenBehaveAsExpected() {
+        // TODO implements Product equals and hashCode methods
+        ArrayList<Image> actualImages = new ArrayList<>();
+        Product product = getProduct("test-user");
+        prepareMock(actualImages, product);
+
+        Path imagesDirectory = imagesPath.resolve(Long.toString(product.getId())).toAbsolutePath();
+        deleteDirectoriesIfExist(imagesDirectory);
+
+        AddProductImagesRequest addImageRequest = getAddImageRequest(image1, image2);
+        AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
+        AddProductImagesResponse response = handler.handle(addImageRequest);
+        List<AddProductImagesRequest.Image> expectedImages = addImageRequest.getImages();
+
+        assertNotNull(response);
+        assertEquals(expectedImages.size(), response.getAddedImagesCount());
+        assertEquals(
+                product.getOwner().getFirstName() + " " + product.getOwner().getLastName(),
+                response.getOwnerFullName());
+        assertEquals(product.getProductName(), response.getProductName());
+
+        assertImages(actualImages, product, expectedImages);
     }
 
-    private void addProduct() {
-        productRepository.addProduct(new Product.Builder()
+    private void assertImages(ArrayList<Image> actualImages, Product product, List<AddProductImagesRequest.Image> expectedImages) {
+        final int DOT_WITH_EXTENSION_LENGTH = 4;
+        for (int i = 0; i < actualImages.size(); i++) {
+            Image actualImage = actualImages.get(i);
+            AddProductImagesRequest.Image expectedImage = expectedImages.get(i);
+            assertNotNull(actualImage);
+            assertEquals(expectedImage.getImageBytes().length, actualImage.getSize());
+            assertNotNull(actualImage.getName());
+            assertTrue(actualImage.getName().length() > DOT_WITH_EXTENSION_LENGTH);
+            assertEquals(product, actualImage.getProduct());
+            assertNotNull(actualImage.getPath());
+            validateImageContents(Path.of(actualImage.getPath()), expectedImage);
+        }
+    }
+
+    private void prepareMock(ArrayList<Image> actualImages, Product product) {
+        when(securityContext.getUser()).thenReturn(getUser("test-user"));
+        when(imageRepository.getImagesCountByProductId(product.getId())).thenReturn(0);
+        when(productRepository.getProductById(product.getId())).thenReturn(product);
+        doAnswer(invocation -> {
+            Image imageDetails = invocation.getArgument(0);
+            actualImages.add(imageDetails);
+            return null;
+        }).when(imageRepository).addImage(any(Image.class));
+    }
+
+    private void deleteDirectoriesIfExist(Path imagesDirectory) {
+        if (Files.exists(imagesDirectory)) {
+            try {
+                Files.walk(imagesDirectory)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private Product getProduct(String owner) {
+        return new Product.Builder()
                 .id(1L)
                 .soldQuantity(1)
                 .rating(2.0F)
@@ -167,15 +206,15 @@ public class AddProductImagesHandlerTest {
                 .description("description")
                 .availableQuantity(100)
                 .availabilityState(ProductAvailabilityState.AVAILABLE)
-                .owner(securityContext.getUser())
+                .owner(getUser(owner))
                 .category(new Category("mobiles"))
-                .build());
+                .build();
     }
 
-    private void validateImageContents(Path imagePath, AddProductImagesRequest.Image image1) {
-        try (InputStream inputStream = Files.newInputStream(imagePath)) {
+    private void validateImageContents(Path actualImagePath, AddProductImagesRequest.Image expectedImage) {
+        try (InputStream inputStream = Files.newInputStream(actualImagePath)) {
             byte[] actualBytes = inputStream.readAllBytes();
-            assertArrayEquals(image1.getImageBytes(), actualBytes);
+            assertArrayEquals(expectedImage.getImageBytes(), actualBytes);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,7 +4,7 @@ import com.eshop.models.entities.Image;
 
 public interface ImageRepository {
 
-    int getImagesCountByProductId(int productId);
+    int getImagesCountByProductId(long productId);
 
     void addImage(Image image);
 }

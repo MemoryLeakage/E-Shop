@@ -39,6 +39,11 @@ public class MockProductRepo implements ProductRepository {
         return product;
     }
 
+    @Override
+    public Product getProductById(long productId) {
+        return null;
+    }
+
     private Product addIdAndGetProduct(Product product) {
         product = new Product.Builder()
                 .category(product.getCategory())
