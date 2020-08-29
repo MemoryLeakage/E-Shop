@@ -36,3 +36,7 @@ mvnw.cmd
 
 ### VS Code ###
 .vscode/
+
+### images ###
+*.JPG
+*.PNG

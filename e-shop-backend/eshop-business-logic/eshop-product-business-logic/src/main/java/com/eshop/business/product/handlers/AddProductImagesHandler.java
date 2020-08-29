@@ -42,15 +42,12 @@ public class AddProductImagesHandler {
     }
 
     private void createFolderIfNotExist(Path imagesPath) {
-        if (!Files.exists(imagesPath))
-            createDirectories(imagesPath);
-    }
-
-    private void createDirectories(Path path) {
-        try {
-            Files.createDirectories(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (!Files.exists(imagesPath)) {
+            try {
+                Files.createDirectories(imagesPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -69,7 +66,7 @@ public class AddProductImagesHandler {
         }
 
         Path productImagesPath = imagesPath.resolve(Long.toString(request.getProductId()));
-        createProductImagesFolderIfNotExist(numberOfImages, productImagesPath);
+        createFolderIfNotExist(productImagesPath);
 
         List<AddProductImagesRequest.Image> images = request.getImages();
         for (AddProductImagesRequest.Image image : images) {
@@ -82,11 +79,6 @@ public class AddProductImagesHandler {
                 owner.getFirstName() + " " + owner.getLastName());
     }
 
-    private void createProductImagesFolderIfNotExist(int numberOfImages, Path productImagesPath) {
-        if (numberOfImages == 0) {
-            createDirectories(productImagesPath);
-        }
-    }
 
     private void addImage(Path productImagesPath, AddProductImagesRequest.Image imageDetails, Product product) {
         //TODO validate imageDetails types.

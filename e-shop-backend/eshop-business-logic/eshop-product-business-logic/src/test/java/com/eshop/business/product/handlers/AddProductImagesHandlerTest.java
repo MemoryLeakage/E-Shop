@@ -133,7 +133,6 @@ public class AddProductImagesHandlerTest {
 
     @Test
     void givenValidRequestAndImagesForProductHasNoImages_whenAdding_thenBehaveAsExpected() {
-        // TODO implements Product equals and hashCode methods
         ArrayList<Image> actualImages = new ArrayList<>();
         Product product = getProduct("test-user");
         prepareMock(actualImages, product);
