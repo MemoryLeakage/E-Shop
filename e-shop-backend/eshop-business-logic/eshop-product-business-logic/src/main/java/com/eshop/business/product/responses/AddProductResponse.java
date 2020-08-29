@@ -28,7 +28,7 @@ public class AddProductResponse {
         return price;
     }
 
-    public double getProductId() {
+    public long getProductId() {
         return productId;
     }
 

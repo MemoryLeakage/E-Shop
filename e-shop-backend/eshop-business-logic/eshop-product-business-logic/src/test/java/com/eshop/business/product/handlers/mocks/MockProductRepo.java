@@ -11,7 +11,7 @@ public class MockProductRepo implements ProductRepository {
 
     private List<Product> products = new ArrayList<>();
     private long idCounter = 1;
-    public Product getProductById(double id) {
+    public Product getProductById(long id) {
         return products.stream().filter(product -> product.getId() == id).findAny().orElseThrow();
     }
 
