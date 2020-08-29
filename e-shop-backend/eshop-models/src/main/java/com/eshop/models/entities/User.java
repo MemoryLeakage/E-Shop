@@ -1,6 +1,8 @@
 package com.eshop.models.entities;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "user")
@@ -20,6 +22,9 @@ public class User {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    private List<Product> products;
 
     public Long getId() {
         return id;
@@ -43,6 +48,19 @@ public class User {
 
     public String getLastName() {
         return lastName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(username, user.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(username);
     }
 
     public static class Builder {
@@ -77,7 +95,7 @@ public class User {
             return this;
         }
 
-        public User build(){
+        public User build() {
             User user = new User();
             user.email = this.email;
             user.firstName = this.firstName;
