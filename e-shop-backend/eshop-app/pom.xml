@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.eshop</groupId>
             <artifactId>eshop-security-keycloak</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -35,6 +35,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-repositories-spring</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

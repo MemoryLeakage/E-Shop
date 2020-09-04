@@ -1,4 +1,4 @@
-package com.eshop.app.security.keycloak;
+package com.eshop.security.keycloak;
 
 public class UserData {
     private String username;

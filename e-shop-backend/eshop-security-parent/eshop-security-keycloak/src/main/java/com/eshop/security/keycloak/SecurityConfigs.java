@@ -1,4 +1,4 @@
-package com.eshop.app.security.keycloak;
+package com.eshop.security.keycloak;
 
 import org.keycloak.adapters.AdapterDeploymentContext;
 import org.keycloak.adapters.springsecurity.AdapterDeploymentContextFactoryBean;

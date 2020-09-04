@@ -1,4 +1,4 @@
-package com.eshop.app.security.keycloak;
+package com.eshop.security.keycloak;
 
 public enum EventType {
     CREATE("CREATE"),

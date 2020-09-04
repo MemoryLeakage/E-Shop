@@ -1,4 +1,4 @@
-package com.eshop.app.security.keycloak;
+package com.eshop.security.keycloak;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,12 +17,13 @@ public class UserEvent {
         this.userData = userData;
     }
 
-    @Override
-    public String toString() {
-        return "UserEvent{" +
-                "eventType=" + eventType +
-                ", userData=" + userData.toString() +
-                '}';
+    public EventType getEventType() {
+        return eventType;
     }
+
+    public UserData getUserData() {
+        return userData;
+    }
+
 }
 

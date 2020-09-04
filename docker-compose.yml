@@ -49,6 +49,7 @@ services:
         DB_ADDR: postgres
         DB_USER: eshopapp
         DB_PASS: P@ssw0rd
+        MQ_HOST: rabbitmq
       ports:
         - 9090:9090
       depends_on:

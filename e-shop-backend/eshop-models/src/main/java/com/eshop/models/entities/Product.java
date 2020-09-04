@@ -6,6 +6,8 @@ import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
+
+//TODO fix relationships
 @Entity
 @Table(name = "product")
 public class Product {
@@ -38,6 +40,7 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<Image> images;
 
+    @ManyToOne
     private Category category;
 
 

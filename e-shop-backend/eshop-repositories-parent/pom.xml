@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>eshop-repositories</module>
+        <module>eshop-repositories-spring</module>
     </modules>
 
     <dependencies>

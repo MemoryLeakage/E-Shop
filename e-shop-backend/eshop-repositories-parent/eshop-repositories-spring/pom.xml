@@ -9,7 +9,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eshop-repositories</artifactId>
+    <artifactId>eshop-repositories-spring</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-repositories</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
