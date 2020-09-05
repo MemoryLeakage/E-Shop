@@ -7,4 +7,6 @@ public interface ImageRepository {
     int getImagesCountByProductId(long productId);
 
     void addImage(Image image);
+
+    Image getByImageId(long imageId);
 }
