@@ -65,7 +65,7 @@ public class AddProductImagesHandler {
             throw new IllegalArgumentException("max number of images exceeded");
         }
 
-        Path productImagesPath = imagesPath.resolve(Long.toString(request.getProductId()));
+        Path productImagesPath = imagesPath.resolve(request.getProductId());
         createFolderIfNotExist(productImagesPath);
 
         List<AddProductImagesRequest.Image> images = request.getImages();

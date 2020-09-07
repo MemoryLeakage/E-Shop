@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>com.eshop</groupId>
-            <artifactId>eshop-repositires</artifactId>
+            <artifactId>eshop-repositories</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

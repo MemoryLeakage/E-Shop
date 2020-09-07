@@ -5,13 +5,13 @@ import java.util.List;
 public class AddProductImagesRequest {
 
     private List<Image> images;
-    private long productId;
+    private String productId;
 
-    public long getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public AddProductImagesRequest(List<Image> images, long productId){
+    public AddProductImagesRequest(List<Image> images, String productId){
         this.images = images;
         this.productId = productId;
     }
