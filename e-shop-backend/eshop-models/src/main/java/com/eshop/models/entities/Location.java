@@ -16,4 +16,6 @@ public class Location {
     @Column(name = "address")
     private String address;
 
+    @OneToOne(mappedBy = "location", fetch = FetchType.LAZY)
+    private Order order;
 }

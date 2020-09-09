@@ -14,4 +14,13 @@ public class CartDetails {
     private Integer quantity;
     @Column(name = "total_price")
     private Double totalPrice;
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    private Cart cart;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id",referencedColumnName = "id")
+    private Product product;
+
 }

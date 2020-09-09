@@ -12,5 +12,5 @@ public interface ProductRepository {
 
     Product updateImageUrlById(long productId, String toString);
 
-    Product getProductById(long productId);
+    Product getProductById(String productId);
 }

@@ -26,8 +26,9 @@ public class UserEventListenerProvider implements EventListenerProvider {
 
     private static final Logger logger = Logger.getLogger(UserEventListenerProvider.class);
     private static final String USER_CHANNEL = "user-change-channel";
-    private static final String ADMIN_CHANNEL = "admin-change-channel";
-
+    // TODO take this value from secure place other than the environment variable
+    private static final String MQ_HOST = "MQ_HOST";
+    private final String mqHost;
     private static final Set<OperationType> adminOperationTypes =
             Set.of(OperationType.CREATE,
                     OperationType.UPDATE);
@@ -42,6 +43,7 @@ public class UserEventListenerProvider implements EventListenerProvider {
 
     public UserEventListenerProvider(KeycloakSession keycloakSession) {
         this.keycloakSession = keycloakSession;
+        this.mqHost = System.getenv(MQ_HOST);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class UserEventListenerProvider implements EventListenerProvider {
             RealmModel realm = keycloakSession.getContext().getRealm();
             ConnectionFactory factory = new ConnectionFactory();
             // TODO make this attribute dynamic.
-            factory.setHost("rabbitmq");
+            factory.setHost(mqHost);
             try (Connection connection = factory.newConnection();
                  Channel channel = connection.createChannel()) {
                 channel.queueDeclare(USER_CHANNEL, true, false, false, null);
@@ -68,7 +70,8 @@ public class UserEventListenerProvider implements EventListenerProvider {
     }
 
     private byte[] buildMessageJsonBytes(UserModel user, Event event) {
-        String userJsonBuilder = "{\"username\":\""+user.getUsername()+"\"," +
+        String eventType = event.getType() == EventType.REGISTER ? "CREATE" : "UPDATE";
+        String userJsonBuilder = "{\"username\":\"" + user.getUsername() + "\"," +
                 "\"firstName\":\"" +
                 user.getFirstName() +
                 "\",\"lastName\":\"" +
@@ -76,7 +79,7 @@ public class UserEventListenerProvider implements EventListenerProvider {
                 "\",\"email\":\"" +
                 user.getEmail() +
                 "\"}";
-        return buildMessageBytes(event.getType().name(),
+        return buildMessageBytes(eventType,
                 userJsonBuilder);
     }
 
@@ -92,15 +95,14 @@ public class UserEventListenerProvider implements EventListenerProvider {
         if (adminOperationTypes.contains(event.getOperationType())
                 && adminResourceTypes.contains(event.getResourceType())) {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("rabitmq");
+            factory.setHost(mqHost);
             try (Connection connection = factory.newConnection();
                  Channel channel = connection.createChannel()) {
-                channel.queueDeclare(ADMIN_CHANNEL, true, false, false, null);
-                
+                channel.queueDeclare(USER_CHANNEL, true, false, false, null);
                 byte[] userJsonBytes = buildMessageBytes(event.getOperationType().name(),
                         event.getRepresentation());
-                channel.basicPublish("", ADMIN_CHANNEL, null, userJsonBytes);
-                logger.debug("Sent message to " + ADMIN_CHANNEL + " : " + new String(userJsonBytes));
+                channel.basicPublish("", USER_CHANNEL, null, userJsonBytes);
+                logger.debug("Sent message to " + USER_CHANNEL + " : " + new String(userJsonBytes));
             } catch (IOException | TimeoutException e) {
                 logger.error("Error Sending Message: " + e.getCause());
                 throw new RuntimeException(e);

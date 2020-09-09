@@ -16,11 +16,12 @@ public class Image {
     private String path;
     @Column(name = "name")
     private String name;
+
     @ManyToOne
-    @JoinColumn(name = "FK_product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private Image() {
+    public Image() {
     }
 
     public Long getId() {
