@@ -14,9 +14,9 @@ public class ProductCategory {
     @JoinColumn(name = "category_id")
     private Category category;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @MapsId("productId")
-//    @JoinColumn(name = "product_id")
-//    private Product product;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("productId")
+    @JoinColumn(name = "product_id")
+    private Product product;
 
 }

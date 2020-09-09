@@ -1,5 +1,7 @@
 package com.eshop.models.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -9,12 +11,13 @@ import java.util.Objects;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "id-generator")
+    @GenericGenerator(name = "id-generator", strategy = "com.eshop.models.IdsGenerator")
     @Column(name = "id")
-    private Long id;
-    @Column(name = "email")
+    private String id;
+    @Column(name = "email", nullable = false)
     private String email;
-    @Column(name = "username")
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
     @Column(name = "rating")
     private Float rating;
@@ -33,8 +36,10 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<ProductWatch> productWatches;
 
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

@@ -1,6 +1,5 @@
 package com.eshop.security.keycloak;
 
-import com.eshop.repositories.UserRepository;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -60,5 +59,4 @@ public class EventListenerConfigs {
     MessageListenerAdapter listenerAdapter(UserEventListener receiver) {
         return new MessageListenerAdapter(receiver, "listen");
     }
-
 }

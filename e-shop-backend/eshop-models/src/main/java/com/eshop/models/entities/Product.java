@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 
 
-//TODO fix relationships
 @Entity
 @Table(name = "product")
 public class Product {
@@ -36,8 +35,8 @@ public class Product {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User owner;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
@@ -46,7 +45,7 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<CartDetails> cartDetailsList;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
     private List<ProductCategory> categories;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)

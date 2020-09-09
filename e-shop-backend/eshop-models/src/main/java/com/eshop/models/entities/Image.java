@@ -18,7 +18,7 @@ public class Image {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false,referencedColumnName = "id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     public Image() {

@@ -20,7 +20,7 @@ public class ProductReview {
     private Product product;
 
     @Column(name = "rate")
-    private float rate;
+    private Float rate;
     @Column(name = "comment")
     private String comment;
 

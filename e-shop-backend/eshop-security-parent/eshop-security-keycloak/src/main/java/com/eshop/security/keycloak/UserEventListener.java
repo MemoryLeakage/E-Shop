@@ -31,17 +31,17 @@ public class UserEventListener {
             UserData userData = userEvent.getUserData();
             if (userEvent.getEventType().equals(EventType.CREATE)) {
                 User user = new User.Builder()
-                        .email(userData.getEmail())
+                        .email(userData.getEmail().toLowerCase())
                         .firstName(userData.getFirstName())
                         .lastName(userData.getLastName())
-                        .username(userData.getUsername())
+                        .username(userData.getUsername().toLowerCase())
                         .build();
                 userRepository.addUser(user);
             } else if (userEvent.getEventType().equals(EventType.UPDATE)) {
                 userRepository.updatePII(userData.getFirstName(),
                         userData.getLastName(),
-                        userData.getEmail(),
-                        userData.getUsername());
+                        userData.getEmail().toLowerCase(),
+                        userData.getUsername().toLowerCase());
 
             }
         } catch (JsonProcessingException e) {

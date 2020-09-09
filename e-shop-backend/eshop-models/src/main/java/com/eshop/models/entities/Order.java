@@ -5,9 +5,10 @@ import com.eshop.models.constants.PaymentMethod;
 import com.eshop.models.constants.PaymentState;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -23,4 +24,15 @@ public class Order {
     @Column(name = "payment_method")
     private PaymentMethod paymentMethod;
 
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetails> orderDetails;
+
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    @OneToOne
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;
 }
