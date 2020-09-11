@@ -1,5 +1,7 @@
 package com.eshop.models.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,9 +9,10 @@ import javax.persistence.*;
 public class Image {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "id-generator")
+    @GenericGenerator(name = "id-generator", strategy = "com.eshop.models.IdsGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
     @Column(name = "size")
     private Integer size;
     @Column(name = "path")
@@ -24,7 +27,7 @@ public class Image {
     public Image() {
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

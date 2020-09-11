@@ -1,23 +1,21 @@
 package com.eshop.models.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "category")
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "id-generator")
+    @GenericGenerator(name = "id-generator", strategy = "com.eshop.models.IdsGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
     @Column(name = "name")
     private String name;
 
-
-//    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-//    private List<ProductCategory> productCategories;
 
     public Category() {}
 

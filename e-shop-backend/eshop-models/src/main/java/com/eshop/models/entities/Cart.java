@@ -1,6 +1,8 @@
 package com.eshop.models.entities;
 
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -9,9 +11,10 @@ import java.util.List;
 public class Cart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "id-generator")
+    @GenericGenerator(name = "id-generator", strategy = "com.eshop.models.IdsGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
     @Column(name = "total_price")
     private Double totalPrice;
 

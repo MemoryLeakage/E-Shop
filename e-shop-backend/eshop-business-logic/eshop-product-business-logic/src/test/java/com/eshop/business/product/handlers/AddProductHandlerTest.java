@@ -133,7 +133,6 @@ public class AddProductHandlerTest {
         assertEquals(request.getDescription(), product.getDescription());
         assertEquals(0, product.getSoldQuantity());
         assertEquals(ProductAvailabilityState.AVAILABLE, product.getAvailabilityState());
-        assertNull(product.getImgUrl());
         assertNull(product.getRating());
         assertEquals(securityContext.getUser(), product.getOwner());
     }
@@ -170,7 +169,6 @@ public class AddProductHandlerTest {
                 .availabilityState(product.getAvailabilityState())
                 .availableQuantity(product.getAvailableQuantity())
                 .description(product.getDescription())
-                .imgUrl(product.getImgUrl())
                 .price(product.getPrice())
                 .productName(product.getProductName())
                 .rating(product.getRating())
