@@ -6,9 +6,9 @@ import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
-import static com.eshop.business.product.handlers.Validators.validateMoreThanZero;
-import static com.eshop.business.product.handlers.Validators.validateNotNull;
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
+import static com.eshop.utilities.Validators.validateMoreThanZero;
+import static com.eshop.utilities.Validators.validateNotNull;
 
 public class AddProductHandler {
 
@@ -43,7 +43,6 @@ public class AddProductHandler {
                 .rating(null)
                 .soldQuantity(0)
                 .availableQuantity(request.getAvailableQuantity())
-                .imgUrl(null)
                 .owner(user)
                 .category(null)
                 .build();

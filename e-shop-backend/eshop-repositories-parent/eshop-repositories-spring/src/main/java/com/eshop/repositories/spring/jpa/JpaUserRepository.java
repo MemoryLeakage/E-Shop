@@ -14,6 +14,9 @@ public interface JpaUserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
     @Modifying
-    @Query("UPDATE User u SET u.firstName=:firstName, u.email=:email, u.lastName=:lastName WHERE u.username=:username")
+    @Query("UPDATE User user SET user.firstName=:firstName, user.email=:email, user.lastName=:lastName WHERE user.username=:username")
     void updatePII(String firstName, String lastName, String email, String username);
+
+    @Query("SELECT user.rating FROM User user WHERE user.username=:username")
+    Float getRatingByUsername(String username);
 }

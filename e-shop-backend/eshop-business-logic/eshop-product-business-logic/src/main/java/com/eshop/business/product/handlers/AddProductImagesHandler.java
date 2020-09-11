@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
-import static com.eshop.business.product.handlers.Validators.validateNotNull;
+import static com.eshop.utilities.Validators.validateNotNull;
 
 public class AddProductImagesHandler {
 

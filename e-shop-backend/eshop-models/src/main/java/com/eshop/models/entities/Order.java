@@ -3,6 +3,7 @@ package com.eshop.models.entities;
 import com.eshop.models.constants.DeliveryState;
 import com.eshop.models.constants.PaymentMethod;
 import com.eshop.models.constants.PaymentState;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
@@ -12,9 +13,10 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "id-generator")
+    @GenericGenerator(name = "id-generator", strategy = "com.eshop.models.IdsGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
     @Column(name = "total_price")
     private Double totalPrice;
     @Column(name = "payment_state")

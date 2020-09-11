@@ -20,8 +20,6 @@ public class Product {
     private String id;
     @Column(name = "product_name")
     private String productName;
-    @Column(name = "img_url")
-    private String imgUrl;
     @Column(name = "rating")
     private Float rating;
     @Column(name = "available_quantity")
@@ -75,10 +73,6 @@ public class Product {
         return productName;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
     public Float getRating() {
         return rating;
     }
@@ -97,10 +91,6 @@ public class Product {
 
     public String getDescription() {
         return description;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
     }
 
     public List<Image> getImages() {
@@ -130,7 +120,6 @@ public class Product {
     public static class Builder {
         private String id;
         private String productName;
-        private String imgUrl;
         private Float rating;
         private Integer availableQuantity;
         private Integer soldQuantity;
@@ -158,11 +147,6 @@ public class Product {
 
         public Builder productName(String productName) {
             this.productName = productName;
-            return this;
-        }
-
-        public Builder imgUrl(String imgUrl) {
-            this.imgUrl = imgUrl;
             return this;
         }
 
@@ -206,7 +190,6 @@ public class Product {
             product.availabilityState = this.availabilityState;
             product.availableQuantity = this.availableQuantity;
             product.description = this.description;
-            product.imgUrl = this.imgUrl;
             product.price = this.price;
             product.rating = this.rating;
             product.productName = productName;

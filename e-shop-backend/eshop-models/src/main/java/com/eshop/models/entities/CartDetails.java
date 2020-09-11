@@ -1,5 +1,7 @@
 package com.eshop.models.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,9 +9,10 @@ import javax.persistence.*;
 public class CartDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "id-generator")
+    @GenericGenerator(name = "id-generator", strategy = "com.eshop.models.IdsGenerator")
     @Column(name = "id")
-    private Long id;
+    private String id;
     @Column(name = "quantity")
     private Integer quantity;
     @Column(name = "total_price")

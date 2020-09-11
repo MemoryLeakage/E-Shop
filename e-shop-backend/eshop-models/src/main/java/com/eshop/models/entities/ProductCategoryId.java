@@ -12,7 +12,7 @@ public class ProductCategoryId implements Serializable {
     private String productId;
 
     @Column(name = "category_id")
-    private Long categoryId;
+    private String categoryId;
 
     @Override
     public boolean equals(Object o) {
