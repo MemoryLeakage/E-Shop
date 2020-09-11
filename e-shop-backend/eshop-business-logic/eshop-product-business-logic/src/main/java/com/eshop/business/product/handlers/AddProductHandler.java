@@ -43,7 +43,6 @@ public class AddProductHandler {
                 .rating(null)
                 .soldQuantity(0)
                 .availableQuantity(request.getAvailableQuantity())
-                .imgUrl(null)
                 .owner(user)
                 .category(null)
                 .build();

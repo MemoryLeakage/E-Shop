@@ -201,7 +201,6 @@ public class AddProductImagesHandlerTest {
                 .rating(2.0F)
                 .productName("test product")
                 .price(100.0)
-                .imgUrl(null)
                 .description("description")
                 .availableQuantity(100)
                 .availabilityState(ProductAvailabilityState.AVAILABLE)

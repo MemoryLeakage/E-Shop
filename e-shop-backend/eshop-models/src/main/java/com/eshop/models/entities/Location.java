@@ -1,14 +1,18 @@
 package com.eshop.models.entities;
 
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "location")
 public class Location {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @GeneratedValue(generator = "id-generator")
+    @GenericGenerator(name = "id-generator", strategy = "com.eshop.models.IdsGenerator")
+    @Column(name = "id")
+    private String id;
     @Column(name = "latitude")
     private Long latitude;
     @Column(name = "longitude")
