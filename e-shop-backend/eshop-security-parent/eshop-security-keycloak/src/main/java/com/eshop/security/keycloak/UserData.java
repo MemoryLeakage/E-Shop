@@ -24,14 +24,4 @@ public class UserData {
     public String getLastName() {
         return lastName;
     }
-
-    @Override
-    public String toString() {
-        return "UserData{" +
-                "username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
-    }
 }
