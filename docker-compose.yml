@@ -17,24 +17,25 @@ services:
     ports:
       - 5432:5432
   keycloak:
-    image: eshop-keycloak:v1.0.0
-    build:
-      context: keycloak
-    environment:
-      DB_VENDOR: POSTGRES
-      DB_ADDR: postgres
-      DB_DATABASE: keycloak
-      DB_USER: keycloak
-      DB_SCHEMA: public
-      DB_PASSWORD: password
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      MQ_HOST: rabbitmq
-      KEYCLOAK_IMPORT: /tmp/eshop-realm.json
-    ports:
-      - 8080:8080
-    depends_on:
-      - postgres
+      image: eshop-keycloak:v1.0.0
+      build:
+        context: keycloak
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: postgres
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: admin
+        MQ_HOST: rabbitmq
+        KEYCLOAK_IMPORT: /tmp/eshop-realm.json
+      ports:
+        - 8080:8080
+      depends_on:
+        - postgres
+        - rabbitmq
   frontend:
     image: eshop-frontend:v1.0.0
     build:
@@ -42,19 +43,19 @@ services:
     ports:
       - 3000:80
   app:
-    image: eshop-app:v1.0.0
-    build:
-      context: e-shop-backend
-    environment:
-      DB_ADDR: postgres
-      DB_USER: eshopapp
-      DB_PASS: P@ssw0rd
-      MQ_HOST: rabbitmq
-      keycloak.auth-server-url: "http://keycloak:8080/auth"
-    ports:
-      - 9090:9090
-    depends_on:
-      - keycloak
+      image: eshop-app:v1.0.0
+      build:
+        context: e-shop-backend
+      environment:
+        DB_ADDR: postgres
+        DB_USER: eshopapp
+        DB_PASS: P@ssw0rd
+        MQ_HOST: rabbitmq
+      ports:
+        - 9090:9090
+      depends_on:
+        - keycloak
+        - rabbitmq
   rabbitmq:
     image: rabbitmq:3.8.7-management-alpine
     ports:
