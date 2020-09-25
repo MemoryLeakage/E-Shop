@@ -13,9 +13,9 @@ public class GetUserInfoHandler {
     private final UserRepository userRepository;
 
     public GetUserInfoHandler(SecurityContext securityContext, UserRepository userRepository) {
-        this.userRepository = userRepository;
         validateNotNull(securityContext, "security context");
         validateNotNull(userRepository, "user repository");
+        this.userRepository = userRepository;
         this.securityContext = securityContext;
     }
 
