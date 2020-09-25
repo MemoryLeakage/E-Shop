@@ -1,5 +1,6 @@
-package com.eshop.security.keycloak;
+package com.eshop.security.test;
 
+import com.eshop.security.keycloak.SecurityConfigs;
 import org.keycloak.adapters.AdapterDeploymentContext;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
@@ -28,8 +29,7 @@ import java.io.InputStream;
 @Configuration
 @EnableWebSecurity
 @KeycloakConfiguration
-public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
-
+public class MockSecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(SecurityConfigs.class);
 
     @Bean
@@ -55,19 +55,16 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/actuator/health")
-                .permitAll()
-                .anyRequest().denyAll();
+                .anyRequest().permitAll();
     }
 
 
-    @Value("classpath:WEB-INF/keycloak.json")
+    @Value("classpath:/keycloak.json")
     private Resource keycloakConfigFileResource;
 
     @Value("${KEYCLOAK_AUTH_URL}")
     private String keycloakServerUrl;
 
-    @Bean
     @Override
     protected AdapterDeploymentContext adapterDeploymentContext(){
         AdapterConfig config;
@@ -77,7 +74,6 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
             KeycloakDeployment keycloakDeployment = KeycloakDeploymentBuilder.build(config);
             return new AdapterDeploymentContext(keycloakDeployment);
         } catch (IOException e) {
-            LOG.error("Unable to read keycloak configuration file cause: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

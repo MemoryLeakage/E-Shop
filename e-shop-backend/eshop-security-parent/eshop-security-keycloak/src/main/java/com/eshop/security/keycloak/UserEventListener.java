@@ -21,6 +21,8 @@ public class UserEventListener {
 
     @Autowired
     public UserEventListener(UserRepository userRepository) {
+        if(userRepository == null)
+            throw new IllegalArgumentException("user repository can not be null");
         this.userRepository = userRepository;
     }
 
@@ -48,6 +50,5 @@ public class UserEventListener {
             LOG.error("Error deserializing MQ for user event " + e.getMessage());
             LOG.debug(Arrays.toString(e.getStackTrace()));
         }
-
     }
 }
