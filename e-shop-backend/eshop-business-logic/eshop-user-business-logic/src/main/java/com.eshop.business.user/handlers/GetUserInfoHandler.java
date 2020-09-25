@@ -5,7 +5,7 @@ import com.eshop.models.entities.User;
 import com.eshop.repositories.UserRepository;
 import com.eshop.security.SecurityContext;
 
-import static com.eshop.utilities.Validators.validateNotNull;
+import static com.eshop.utilities.Validators.validateNotNullArgument;
 
 public class GetUserInfoHandler {
 
@@ -13,8 +13,8 @@ public class GetUserInfoHandler {
     private final UserRepository userRepository;
 
     public GetUserInfoHandler(SecurityContext securityContext, UserRepository userRepository) {
-        validateNotNull(securityContext, "security context");
-        validateNotNull(userRepository, "user repository");
+        validateNotNullArgument(securityContext, "security context");
+        validateNotNullArgument(userRepository, "user repository");
         this.userRepository = userRepository;
         this.securityContext = securityContext;
     }

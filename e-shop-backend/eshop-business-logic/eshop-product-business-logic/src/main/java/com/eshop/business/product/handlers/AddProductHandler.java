@@ -7,17 +7,16 @@ import com.eshop.models.entities.User;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
-import static com.eshop.utilities.Validators.validateMoreThanZero;
-import static com.eshop.utilities.Validators.validateNotNull;
+import static com.eshop.utilities.Validators.*;
 
 public class AddProductHandler {
 
-    private ProductRepository productRepository;
-    private SecurityContext securityContext;
+    private final ProductRepository productRepository;
+    private final SecurityContext securityContext;
 
     public AddProductHandler(SecurityContext securityContext, ProductRepository repository) {
-        validateNotNull(securityContext, "security context");
-        validateNotNull(repository, "product repository");
+        validateNotNullArgument(securityContext, "security context");
+        validateNotNullArgument(repository, "product repository");
         this.securityContext = securityContext;
         productRepository = repository;
     }
@@ -49,15 +48,16 @@ public class AddProductHandler {
     }
 
     private void validateUser(User user) {
-        if (user == null)
-            throw new IllegalStateException("user is not authenticated");
+        validateNotNull(user,
+                IllegalStateException::new,
+                "user is not authenticated");
     }
 
     private void validateRequest(AddProductRequest request) {
-        validateNotNull(request, "request");
-        validateNotNull(request.getCategories(), "category");
-        validateNotNull(request.getDescription(), "description");
-        validateNotNull(request.getProductName(), "product name");
+        validateNotNullArgument(request, "request");
+        validateNotNullArgument(request.getCategories(), "category");
+        validateNotNullArgument(request.getDescription(), "description");
+        validateNotNullArgument(request.getProductName(), "product name");
         validateMoreThanZero(request.getAvailableQuantity(), "available quantity");
         validateMoreThanZero(request.getPrice(), "price");
     }

@@ -15,14 +15,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 
-import static com.eshop.utilities.Validators.validateNotNull;
+import static com.eshop.utilities.Validators.validateNotNullArgument;
 
 public class AddProductImagesHandler {
 
-    private ProductRepository productRepository;
-    private ImageRepository imageRepository;
-    private SecurityContext securityContext;
-    private Path imagesPath;
+    private final ProductRepository productRepository;
+    private final ImageRepository imageRepository;
+    private final SecurityContext securityContext;
+    private final Path imagesPath;
     //    TODO this number should be configurable
     private final int maxNumberOfImagesPerProduct = 8;
 
@@ -30,15 +30,15 @@ public class AddProductImagesHandler {
                                    ProductRepository productRepository,
                                    ImageRepository imageRepository,
                                    Path imagesPath) {
-        validateNotNull(securityContext, "security context");
-        validateNotNull(productRepository, "product repository");
-        validateNotNull(imageRepository, "image repository");
-        validateNotNull(imagesPath, "images path");
+        validateNotNullArgument(securityContext, "security context");
+        validateNotNullArgument(productRepository, "product repository");
+        validateNotNullArgument(imageRepository, "image repository");
+        validateNotNullArgument(imagesPath, "images path");
         this.imagesPath = imagesPath;
-        createFolderIfNotExist(imagesPath);
         this.productRepository = productRepository;
         this.imageRepository = imageRepository;
         this.securityContext = securityContext;
+        createFolderIfNotExist(imagesPath);
     }
 
     private void createFolderIfNotExist(Path imagesPath) {
@@ -52,9 +52,14 @@ public class AddProductImagesHandler {
     }
 
     public AddProductImagesResponse handle(AddProductImagesRequest request) {
-        validateNotNull(request, "request");
-        validateNotNull(request.getImages(), "images");
+        validateNotNullArgument(request, "request");
+        validateNotNullArgument(request.getImages(), "images");
         Product product = productRepository.getProductById(request.getProductId());
+
+        if(product == null){
+            throw new IllegalStateException("productid="+ request.getProductId() + " does not exist in the database");
+        }
+
         User owner = product.getOwner();
         if (!owner.equals(securityContext.getUser())) {
             throw new IllegalStateException("not the owner");
@@ -70,7 +75,7 @@ public class AddProductImagesHandler {
 
         List<AddProductImagesRequest.Image> images = request.getImages();
         for (AddProductImagesRequest.Image image : images) {
-            validateNotNull(image, "image");
+            validateNotNullArgument(image, "image");
             addImage(productImagesPath, image, product);
         }
 

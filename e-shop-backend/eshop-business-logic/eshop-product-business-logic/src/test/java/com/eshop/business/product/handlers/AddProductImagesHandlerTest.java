@@ -115,6 +115,15 @@ public class AddProductImagesHandlerTest {
     }
 
     @Test
+    void givenNotExistingProduct_whenAddingImages_thenThrowException(){
+        when(productRepository.getProductById("1")).thenReturn(null);
+        AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
+        IllegalStateException thrown = assertThrows(IllegalStateException.class,
+                () -> handler.handle(getAddImageRequest()));
+        assertEquals("productid=1 does not exist in the database", thrown.getMessage());
+    }
+
+    @Test
     void givenCurrentAuthenticatedUserNotEqualOwner_whenAddingImages_thenThrowException() {
         when(securityContext.getUser()).thenReturn(getUser("ANOTHER_USER"));
         when(productRepository.getProductById("1")).thenReturn(getProduct("test-user"));
