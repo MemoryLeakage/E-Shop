@@ -1,12 +1,14 @@
 package com.eshop.business.user.responses;
 
+import java.util.Set;
+
 public class GetUserInfoResponse {
 
     private String username;
     private String firstName;
     private String lastName;
     private String email;
-    private String[] roles;
+    private Set<String> roles;
     private float rating;
 
     public String getUsername() {
@@ -25,7 +27,7 @@ public class GetUserInfoResponse {
         return email;
     }
 
-    public String[] getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
@@ -38,7 +40,7 @@ public class GetUserInfoResponse {
         private String firstName;
         private String lastName;
         private String email;
-        private String[] roles;
+        private Set<String> roles;
         private float rate;
 
         public Builder username(String username) {
@@ -61,7 +63,7 @@ public class GetUserInfoResponse {
             return this;
         }
 
-        public Builder roles(String[] roles) {
+        public Builder roles(Set<String> roles) {
             this.roles = roles;
             return this;
         }

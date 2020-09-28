@@ -43,9 +43,8 @@ public class AddProductHandler {
                 .rating(null)
                 .soldQuantity(0)
                 .availableQuantity(request.getAvailableQuantity())
-                .imgUrl(null)
                 .owner(user)
-                .category(request.getCategory())
+                .category(null)
                 .build();
     }
 
@@ -56,7 +55,7 @@ public class AddProductHandler {
 
     private void validateRequest(AddProductRequest request) {
         validateNotNull(request, "request");
-        validateNotNull(request.getCategory(), "category");
+        validateNotNull(request.getCategories(), "category");
         validateNotNull(request.getDescription(), "description");
         validateNotNull(request.getProductName(), "product name");
         validateMoreThanZero(request.getAvailableQuantity(), "available quantity");

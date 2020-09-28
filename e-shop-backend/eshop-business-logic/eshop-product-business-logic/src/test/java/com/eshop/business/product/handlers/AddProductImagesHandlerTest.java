@@ -91,7 +91,7 @@ public class AddProductImagesHandlerTest {
 
     @Test
     void givenRequestWithNullImages_whenAddingImages_thenThrowException() {
-        AddProductImagesRequest request = new AddProductImagesRequest(null, 1);
+        AddProductImagesRequest request = new AddProductImagesRequest(null, "1");
         NullPointerException thrown = assertThrows(NullPointerException.class,
                 () -> productImageHandler.handle(request));
         assertEquals("images can not be null", thrown.getMessage());
@@ -100,10 +100,10 @@ public class AddProductImagesHandlerTest {
     @Test
     void givenRequestWithOneOrMoreOfNullImages_whenAddingImages_thenThrowException() {
         when(securityContext.getUser()).thenReturn(getUser("test-user"));
-        when(productRepository.getProductById(1)).thenReturn(getProduct("test-user"));
+        when(productRepository.getProductById("1")).thenReturn(getProduct("test-user"));
 
         List<AddProductImagesRequest.Image> images = Arrays.asList(null, null);
-        AddProductImagesRequest request = new AddProductImagesRequest(images, 1);
+        AddProductImagesRequest request = new AddProductImagesRequest(images, "1");
 
         NullPointerException thrown = assertThrows(NullPointerException.class,
                 () -> productImageHandler.handle(request));
@@ -113,7 +113,7 @@ public class AddProductImagesHandlerTest {
     @Test
     void givenCurrentAuthenticatedUserNotEqualOwner_whenAddingImages_thenThrowException() {
         when(securityContext.getUser()).thenReturn(getUser("ANOTHER_USER"));
-        when(productRepository.getProductById(1)).thenReturn(getProduct("test-user"));
+        when(productRepository.getProductById("1")).thenReturn(getProduct("test-user"));
         AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
         IllegalStateException thrown = assertThrows(IllegalStateException.class,
                 () -> handler.handle(getAddImageRequest()));
@@ -123,8 +123,8 @@ public class AddProductImagesHandlerTest {
     @Test
     void givenImagesExceedMaxNumberOfAllowedImages_whenAdding_thenThrowException() {
         when(securityContext.getUser()).thenReturn(getUser("test-user"));
-        when(productRepository.getProductById(1)).thenReturn(getProduct("test-user"));
-        when(imageRepository.getImagesCountByProductId(1)).thenReturn(6);
+        when(productRepository.getProductById("1")).thenReturn(getProduct("test-user"));
+        when(imageRepository.getImagesCountByProductId("1")).thenReturn(6);
         AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
         AddProductImagesRequest request = getAddImageRequest(image1, image2, image1);
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> handler.handle(request));
@@ -137,7 +137,7 @@ public class AddProductImagesHandlerTest {
         Product product = getProduct("test-user");
         prepareMock(actualImages, product);
 
-        Path imagesDirectory = imagesPath.resolve(Long.toString(product.getId())).toAbsolutePath();
+        Path imagesDirectory = imagesPath.resolve(product.getId()).toAbsolutePath();
         deleteDirectoriesIfExist(imagesDirectory);
 
         AddProductImagesRequest addImageRequest = getAddImageRequest(image1, image2);
@@ -196,17 +196,16 @@ public class AddProductImagesHandlerTest {
 
     private Product getProduct(String owner) {
         return new Product.Builder()
-                .id(1L)
+                .id("1")
                 .soldQuantity(1)
                 .rating(2.0F)
                 .productName("test product")
                 .price(100.0)
-                .imgUrl(null)
                 .description("description")
                 .availableQuantity(100)
                 .availabilityState(ProductAvailabilityState.AVAILABLE)
                 .owner(getUser(owner))
-                .category(new Category("mobiles"))
+                .category(null)
                 .build();
     }
 
@@ -221,7 +220,7 @@ public class AddProductImagesHandlerTest {
 
 
     private AddProductImagesRequest getAddImageRequest(AddProductImagesRequest.Image... images) {
-        return new AddProductImagesRequest(Arrays.asList(images), 1);
+        return new AddProductImagesRequest(Arrays.asList(images), "1");
     }
 
     private User getUser(String username) {

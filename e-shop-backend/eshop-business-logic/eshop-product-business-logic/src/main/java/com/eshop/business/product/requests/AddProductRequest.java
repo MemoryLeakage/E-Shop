@@ -2,12 +2,14 @@ package com.eshop.business.product.requests;
 
 import com.eshop.models.entities.Category;
 
+import java.util.List;
+
 public class AddProductRequest {
     private String productName;
     private double price;
     private int availableQuantity;
     private String description;
-    private Category category;
+    private List<Category> categories;
 
     private AddProductRequest(){}
 
@@ -27,8 +29,8 @@ public class AddProductRequest {
         return description;
     }
 
-    public Category getCategory() {
-        return category;
+    public List<Category> getCategories() {
+        return categories;
     }
 
     public static class Builder {
@@ -36,7 +38,7 @@ public class AddProductRequest {
         private float price;
         private int availableQuantity;
         private String description;
-        private Category category;
+        private List<Category> categories;
 
 
         public Builder productName(String productName) {
@@ -59,15 +61,15 @@ public class AddProductRequest {
             return this;
         }
 
-        public Builder category(Category category) {
-            this.category = category;
+        public Builder category(List<Category> categories) {
+            this.categories = categories;
             return this;
         }
 
         public AddProductRequest build(){
             AddProductRequest request = new AddProductRequest();
             request.availableQuantity = this.availableQuantity;
-            request.category = this.category;
+            request.categories = this.categories;
             request.description = this.description;
             request.price = this.price;
             request.productName =  this.productName;

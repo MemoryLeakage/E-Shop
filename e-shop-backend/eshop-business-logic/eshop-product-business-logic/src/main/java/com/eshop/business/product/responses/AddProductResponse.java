@@ -7,9 +7,9 @@ public class AddProductResponse {
     private String productName;
     private int inStock;
     private double price;
-    private long productId;
+    private String productId;
 
-    public AddProductResponse(String productName, int inStock, double price, long productId) {
+    public AddProductResponse(String productName, int inStock, double price, String productId) {
         this.productName = productName;
         this.inStock = inStock;
         this.price = price;
@@ -28,7 +28,7 @@ public class AddProductResponse {
         return price;
     }
 
-    public long getProductId() {
+    public String getProductId() {
         return productId;
     }
 

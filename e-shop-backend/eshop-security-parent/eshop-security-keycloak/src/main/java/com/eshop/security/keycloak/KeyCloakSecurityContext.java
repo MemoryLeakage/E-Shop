@@ -1,4 +1,4 @@
-package com.eshop.app.security.keycloak;
+package com.eshop.security.keycloak;
 
 import com.eshop.models.entities.User;
 import com.eshop.security.SecurityContext;
@@ -12,6 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
+
+//TODO change this class name as it conflicts with KeycloakSecurityContext from keycloak packages.
 @Component
 public class KeyCloakSecurityContext implements SecurityContext {
 
@@ -20,6 +24,8 @@ public class KeyCloakSecurityContext implements SecurityContext {
 
     @Autowired
     public KeyCloakSecurityContext(AdapterDeploymentContext adapterDeploymentContext) {
+        if(adapterDeploymentContext == null)
+            throw new IllegalArgumentException("null adapter deployment context");
         this.keycloakDeployment = adapterDeploymentContext.resolveDeployment(null);
     }
 
@@ -59,11 +65,11 @@ public class KeyCloakSecurityContext implements SecurityContext {
     }
 
     @Override
-    public String[] getRoles() {
+    public Set<String> getRoles() {
         initializeAuthentication();
         if (isNotKeycloakAuthentication())
             return null;
         AccessToken accessToken = getAccessToken();
-        return (String[]) accessToken.getResourceAccess(keycloakDeployment.getResourceName()).getRoles().toArray();
+        return accessToken.getResourceAccess(keycloakDeployment.getResourceName()).getRoles();
     }
 }

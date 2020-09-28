@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 @ExtendWith(MockitoExtension.class)
 public class GetUserInfoHandlerTest {
 
@@ -37,13 +39,13 @@ public class GetUserInfoHandlerTest {
         Mockito.verify(authenticatedUser, Mockito.times(1)).getUser();
         assertNotNull(response);
         User expectedUser = authenticatedUser.getUser();
-        String[] expectedRoles = authenticatedUser.getRoles();
+        Set<String> expectedRoles = authenticatedUser.getRoles();
         assertEquals(expectedUser.getUsername(), response.getUsername());
         assertEquals(expectedUser.getFirstName(), response.getFirstName());
         assertEquals(expectedUser.getLastName(), response.getLastName());
         assertEquals(expectedUser.getEmail(), response.getEmail());
         assertEquals(expectedUser.getRating(), response.getRating());
-        assertArrayEquals(expectedRoles, response.getRoles());
+        assertEquals(expectedRoles, response.getRoles());
     }
 
     public User getUser() {
@@ -56,7 +58,7 @@ public class GetUserInfoHandlerTest {
                 .build();
     }
 
-    public String[] getRoles() {
-        return new String[]{"ADMIN", "MERCHANT"};
+    public Set<String> getRoles() {
+        return Set.of("ADMIN", "MERCHANT");
     }
 }

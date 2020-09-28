@@ -2,19 +2,19 @@ version: '3'
 
 volumes:
   postgres_data:
-      driver: local
+    driver: local
 
 services:
   postgres:
-      image: postgres
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
-        - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
-      environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: keycloak
-        POSTGRES_PASSWORD: password
-      ports:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    ports:
       - 5432:5432
   keycloak:
       image: eshop-keycloak:v1.0.0
@@ -27,17 +27,21 @@ services:
         DB_USER: keycloak
         DB_SCHEMA: public
         DB_PASSWORD: password
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: admin
+        MQ_HOST: rabbitmq
         KEYCLOAK_IMPORT: /tmp/eshop-realm.json
       ports:
         - 8080:8080
       depends_on:
         - postgres
+        - rabbitmq
   frontend:
-      image: eshop-frontend:v1.0.0
-      build:
-        context: e-shop-frontend
-      ports:
-        - 3000:80
+    image: eshop-frontend:v1.0.0
+    build:
+      context: e-shop-frontend
+    ports:
+      - 3000:80
   app:
       image: eshop-app:v1.0.0
       build:
@@ -46,11 +50,14 @@ services:
         DB_ADDR: postgres
         DB_USER: eshopapp
         DB_PASS: P@ssw0rd
+        MQ_HOST: rabbitmq
       ports:
         - 9090:9090
       depends_on:
         - keycloak
+        - rabbitmq
   rabbitmq:
-      image: rabbitmq:3.8.7-management-alpine
-      ports:
-        - 15672:15672
+    image: rabbitmq:3.8.7-management-alpine
+    ports:
+      - 15672:15672
+      - 5672:5672
