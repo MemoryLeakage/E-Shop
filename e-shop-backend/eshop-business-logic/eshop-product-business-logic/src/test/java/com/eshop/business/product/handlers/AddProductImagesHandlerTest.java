@@ -37,8 +37,12 @@ public class AddProductImagesHandlerTest {
 
     private AddProductImagesHandler productImageHandler;
     private final Path imagesPath = Paths.get("./src/test/resources");
-    private final AddProductImagesRequest.Image image1 = new AddProductImagesRequest.Image(new byte[]{1, 2, 3, 4}, "JPG");
-    private final AddProductImagesRequest.Image image2 = new AddProductImagesRequest.Image(new byte[]{1, 2, 3, 4, 5}, "PNG");
+
+    private final AddProductImagesRequest.Image image1 =
+            new AddProductImagesRequest.Image(new byte[]{1, 2, 3, 4}, "JPG");
+    private final AddProductImagesRequest.Image image2 =
+            new AddProductImagesRequest.Image(new byte[]{1, 2, 3, 4, 5}, "PNG");
+
     @Mock
     private SecurityContext securityContext;
     @Mock
@@ -54,21 +58,21 @@ public class AddProductImagesHandlerTest {
 
     @Test
     void givenNullSecurityContext_whenConstructing_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> new AddProductImagesHandler(null, productRepository, imageRepository, imagesPath));
         assertEquals("security context can not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullProductRepository_whenConstructing_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> new AddProductImagesHandler(securityContext, null, imageRepository, imagesPath));
         assertEquals("product repository can not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullImageRepository_whenConstructing_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> new AddProductImagesHandler(securityContext, productRepository, null, imagesPath));
         assertEquals("image repository can not be null", thrown.getMessage());
     }
@@ -76,7 +80,7 @@ public class AddProductImagesHandlerTest {
 
     @Test
     void givenNullImagesPath_whenConstructing_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> new AddProductImagesHandler(securityContext, productRepository, imageRepository, null));
         assertEquals("images path can not be null", thrown.getMessage());
     }
@@ -84,7 +88,7 @@ public class AddProductImagesHandlerTest {
 
     @Test
     void givenNullRequest_whenAddingImages_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productImageHandler.handle(null));
         assertEquals("request can not be null", thrown.getMessage());
     }
@@ -92,7 +96,7 @@ public class AddProductImagesHandlerTest {
     @Test
     void givenRequestWithNullImages_whenAddingImages_thenThrowException() {
         AddProductImagesRequest request = new AddProductImagesRequest(null, "1");
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productImageHandler.handle(request));
         assertEquals("images can not be null", thrown.getMessage());
     }
@@ -105,9 +109,18 @@ public class AddProductImagesHandlerTest {
         List<AddProductImagesRequest.Image> images = Arrays.asList(null, null);
         AddProductImagesRequest request = new AddProductImagesRequest(images, "1");
 
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productImageHandler.handle(request));
         assertEquals("image can not be null", thrown.getMessage());
+    }
+
+    @Test
+    void givenNotExistingProduct_whenAddingImages_thenThrowException(){
+        when(productRepository.getProductById("1")).thenReturn(null);
+        AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
+        IllegalStateException thrown = assertThrows(IllegalStateException.class,
+                () -> handler.handle(getAddImageRequest()));
+        assertEquals("productid=1 does not exist in the database", thrown.getMessage());
     }
 
     @Test

@@ -38,55 +38,64 @@ public class AddProductHandlerTest {
     }
 
     @Test
-    void givenNullConstructorArg_whenConstructing_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+    void givenNullSecurityContext_whenConstructing_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> new AddProductHandler(null, productRepo));
         assertEquals("security context can not be null", thrown.getMessage());
 
-        thrown = assertThrows(NullPointerException.class,
-                () -> new AddProductHandler(securityContext, null));
+    }
 
+    @Test
+    void givenNullProductRepository_whenConstructing_thenThrowException(){
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> new AddProductHandler(securityContext, null));
         assertEquals("product repository can not be null", thrown.getMessage());
 
     }
 
     @Test
     void givenNullAddProductRequest_whenAddingProduct_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productHandler.handle(null));
-
         assertEquals("request can not be null", thrown.getMessage());
     }
 
     @Test
-    void givenNullRequestFields_whenAddingProduct_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+    void givenNullProductCategory_whenAddingProduct_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productHandler.handle(getValidRequestBuilder().category(null).build()));
         assertEquals("category can not be null", thrown.getMessage());
-
-        thrown = assertThrows(NullPointerException.class,
-                () -> productHandler.handle(getValidRequestBuilder().description(null).build()));
-        assertEquals("description can not be null", thrown.getMessage());
-
-        thrown = assertThrows(NullPointerException.class,
-                () -> productHandler.handle(getValidRequestBuilder().productName(null).build()));
-        assertEquals("product name can not be null", thrown.getMessage());
-
     }
 
     @Test
-    void givenInvalidRequestField_whenAddingProduct_thenThrowException() {
+    void givenNullDescription_whenAddingProduct_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> productHandler.handle(getValidRequestBuilder().description(null).build()));
+        assertEquals("description can not be null", thrown.getMessage());
+    }
+
+    @Test
+    void givenNullProductName_whenAddingProduct_thenThrowException(){
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> productHandler.handle(getValidRequestBuilder().productName(null).build()));
+        assertEquals("product name can not be null", thrown.getMessage());
+    }
+
+    @Test
+    void givenInvalidNegativePrice_whenAddingProduct_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productHandler.handle(getValidRequestBuilder().price(-5).build()));
         assertEquals("price has to be greater than 0", thrown.getMessage());
-
-        thrown = assertThrows(IllegalArgumentException.class,
+    }
+    @Test
+    void givenInvalidNegativeQuantity_whenAddingProduct_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productHandler.handle(getValidRequestBuilder().availableQuantity(-10).build()));
         assertEquals("available quantity has to be greater than 0", thrown.getMessage());
     }
 
     @Test
-    void givenNullAuthenticated_whenAddingProduct_thenThrowException() {
+    void givenNonAuthenticatedUser_whenAddingProduct_thenThrowException() {
         Mockito.when(securityContext.getUser()).thenReturn(null);
         AddProductHandler addProductHandler = new AddProductHandler(securityContext, this.productRepo);
         IllegalStateException thrown = assertThrows(IllegalStateException.class,
@@ -95,7 +104,7 @@ public class AddProductHandlerTest {
     }
 
     @Test
-    void givenValidRequest_whenAddingProduct_thenAdd() {
+    void givenValidRequest_whenAddingProduct_thenAddProduct() {
         prepareMock();
 
         AddProductRequest request = getValidRequestBuilder().build();

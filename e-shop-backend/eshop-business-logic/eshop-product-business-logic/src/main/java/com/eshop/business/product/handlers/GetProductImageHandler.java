@@ -4,6 +4,7 @@ import com.eshop.business.product.requests.GetProductImageRequest;
 import com.eshop.business.product.responses.GetProductImageResponse;
 import com.eshop.models.entities.Image;
 import com.eshop.repositories.ImageRepository;
+import com.eshop.utilities.Validators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +22,13 @@ public class GetProductImageHandler {
     private final ImageRepository imageRepository;
 
     public GetProductImageHandler(ImageRepository imageRepository) {
-        Validators.validateNotNull(imageRepository, "image repository");
+        Validators.validateNotNullArgument(imageRepository, "image repository");
 
         this.imageRepository = imageRepository;
     }
 
     public GetProductImageResponse handle(GetProductImageRequest request) {
-        Validators.validateNotNull(request, "request");
+        Validators.validateNotNullArgument(request, "request");
         Image image = imageRepository.getByImageId(request.getImageId());
         Validators.validate(Objects::isNull,
                 NullPointerException::new,

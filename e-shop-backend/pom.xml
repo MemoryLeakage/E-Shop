@@ -22,6 +22,7 @@
         <module>eshop-services-parent</module>
         <module>eshop-models</module>
         <module>eshop-repositories-parent</module>
+        <module>eshop-utilities</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -1,5 +1,6 @@
 package com.eshop.keycloak.spis;
 
+import com.rabbitmq.client.ConnectionFactory;
 import org.keycloak.Config;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.EventListenerProviderFactory;
@@ -8,16 +9,19 @@ import org.keycloak.models.KeycloakSessionFactory;
 
 public class UserEventListenerProviderFactory implements EventListenerProviderFactory {
 
-    private static EventListenerProvider eventListenerProvider;
+    // TODO take this value from secure place other than the environment variable
+    private static final String MQ_HOST = "MQ_HOST";
+    private ConnectionFactory factory;
 
     @Override
     public EventListenerProvider create(KeycloakSession keycloakSession) {
-        return new UserEventListenerProvider(keycloakSession);
+        return new UserEventListenerProvider(keycloakSession, factory);
     }
 
     @Override
     public void init(Config.Scope scope) {
-
+        this.factory = new ConnectionFactory();
+        factory.setHost(System.getenv(MQ_HOST));
     }
 
     @Override

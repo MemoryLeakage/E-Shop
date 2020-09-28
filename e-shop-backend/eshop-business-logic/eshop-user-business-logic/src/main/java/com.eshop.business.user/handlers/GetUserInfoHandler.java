@@ -2,30 +2,33 @@ package com.eshop.business.user.handlers;
 
 import com.eshop.business.user.responses.GetUserInfoResponse;
 import com.eshop.models.entities.User;
+import com.eshop.repositories.UserRepository;
 import com.eshop.security.SecurityContext;
+
+import static com.eshop.utilities.Validators.validateNotNullArgument;
 
 public class GetUserInfoHandler {
 
     private final SecurityContext securityContext;
+    private final UserRepository userRepository;
 
-    public GetUserInfoHandler(SecurityContext securityContext) {
-        validateNotNull(securityContext, "security context cannot be null");
+    public GetUserInfoHandler(SecurityContext securityContext, UserRepository userRepository) {
+        validateNotNullArgument(securityContext, "security context");
+        validateNotNullArgument(userRepository, "user repository");
+        this.userRepository = userRepository;
         this.securityContext = securityContext;
     }
 
-    private void validateNotNull(SecurityContext securityContext, String message) {
-        if (securityContext == null)
-            throw new IllegalArgumentException(message);
-    }
 
     public GetUserInfoResponse handle() {
-        User user = securityContext.getUser();
+        User contextUser = securityContext.getUser();
+        Float rating = userRepository.getRatingByUsername(contextUser.getUsername());
         return new GetUserInfoResponse.Builder()
-                .username(user.getUsername())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .rate(user.getRating())
+                .username(contextUser.getUsername())
+                .firstName(contextUser.getFirstName())
+                .lastName(contextUser.getLastName())
+                .email(contextUser.getEmail())
+                .rate(rating)
                 .roles(securityContext.getRoles())
                 .build();
     }

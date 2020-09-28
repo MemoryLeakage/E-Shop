@@ -26,9 +26,6 @@ public class UserEventListenerProvider implements EventListenerProvider {
 
     private static final Logger logger = Logger.getLogger(UserEventListenerProvider.class);
     private static final String USER_CHANNEL = "user-change-channel";
-    // TODO take this value from secure place other than the environment variable
-    private static final String MQ_HOST = "MQ_HOST";
-    private final String mqHost;
     private static final Set<OperationType> adminOperationTypes =
             Set.of(OperationType.CREATE,
                     OperationType.UPDATE);
@@ -40,10 +37,11 @@ public class UserEventListenerProvider implements EventListenerProvider {
                     EventType.UPDATE_EMAIL,
                     EventType.UPDATE_PROFILE);
     private final KeycloakSession keycloakSession;
+    private final ConnectionFactory factory;
 
-    public UserEventListenerProvider(KeycloakSession keycloakSession) {
+    public UserEventListenerProvider(KeycloakSession keycloakSession, ConnectionFactory factory) {
         this.keycloakSession = keycloakSession;
-        this.mqHost = System.getenv(MQ_HOST);
+        this.factory = factory;
     }
 
     @Override
@@ -51,21 +49,9 @@ public class UserEventListenerProvider implements EventListenerProvider {
         if (eventTypes.contains(event.getType())) {
             UserProvider users = keycloakSession.userStorageManager();
             RealmModel realm = keycloakSession.getContext().getRealm();
-            ConnectionFactory factory = new ConnectionFactory();
-            // TODO make this attribute dynamic.
-            factory.setHost(mqHost);
-            try (Connection connection = factory.newConnection();
-                 Channel channel = connection.createChannel()) {
-                channel.queueDeclare(USER_CHANNEL, true, false, false, null);
-                UserModel user = users.getUserById(event.getUserId(), realm);
-                byte[] userJsonBytes = buildMessageJsonBytes(user, event);
-                channel.basicPublish("", USER_CHANNEL, null, userJsonBytes);
-                logger.debug("Sent message to " + USER_CHANNEL + " : " + new String(userJsonBytes));
-            } catch (IOException | TimeoutException e) {
-                logger.error("Error Sending Message: " + e.getCause());
-                throw new RuntimeException(e);
-            }
-
+            UserModel user = users.getUserById(event.getUserId(), realm);
+            byte[] userJsonBytes = buildMessageJsonBytes(user, event);
+            sendMessage(userJsonBytes);
         }
     }
 
@@ -94,20 +80,21 @@ public class UserEventListenerProvider implements EventListenerProvider {
 
         if (adminOperationTypes.contains(event.getOperationType())
                 && adminResourceTypes.contains(event.getResourceType())) {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(mqHost);
-            try (Connection connection = factory.newConnection();
-                 Channel channel = connection.createChannel()) {
-                channel.queueDeclare(USER_CHANNEL, true, false, false, null);
-                byte[] userJsonBytes = buildMessageBytes(event.getOperationType().name(),
-                        event.getRepresentation());
-                channel.basicPublish("", USER_CHANNEL, null, userJsonBytes);
-                logger.debug("Sent message to " + USER_CHANNEL + " : " + new String(userJsonBytes));
-            } catch (IOException | TimeoutException e) {
-                logger.error("Error Sending Message: " + e.getCause());
-                throw new RuntimeException(e);
-            }
+            byte[] userJsonBytes = buildMessageBytes(event.getOperationType().name(),
+                    event.getRepresentation());
+            sendMessage(userJsonBytes);
+        }
+    }
 
+    private void sendMessage(byte[] userJsonBytes) {
+        try (Connection connection = factory.newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.queueDeclare(USER_CHANNEL, true, false, false, null);
+            channel.basicPublish("", USER_CHANNEL, null, userJsonBytes);
+            logger.debug("Sent message to " + USER_CHANNEL + " : " + new String(userJsonBytes));
+        } catch (IOException | TimeoutException e) {
+            logger.error("Error Sending Message: " + e.getCause());
+            throw new RuntimeException(e);
         }
     }
 

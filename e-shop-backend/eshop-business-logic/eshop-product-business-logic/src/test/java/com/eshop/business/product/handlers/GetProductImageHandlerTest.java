@@ -30,7 +30,7 @@ public class GetProductImageHandlerTest {
 
     @Test
     void givenNullImageRepository_whenConstructing_thenThrowException() {
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> new GetProductImageHandler(null));
         assertEquals("image repository can not be null", thrown.getMessage());
     }
@@ -38,7 +38,7 @@ public class GetProductImageHandlerTest {
     @Test
     void givenNullRequest_whenHandling_thenThrowException() {
         GetProductImageHandler handler = new GetProductImageHandler(imageRepository);
-        NullPointerException thrown = assertThrows(NullPointerException.class,
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> handler.handle(null));
         assertEquals("request can not be null", thrown.getMessage());
     }
