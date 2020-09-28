@@ -14,10 +14,10 @@ import java.util.Arrays;
 
 @Component
 public class UserEventListener {
-    private static final Logger LOG = LoggerFactory.getLogger(UserEventListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserEventListener.class);
     private static final ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserEventListener(UserRepository userRepository) {
@@ -28,6 +28,7 @@ public class UserEventListener {
 
     public void listen(byte[] messageBytes) {
         String message = new String(messageBytes);
+        logger.debug("received message {}", message);
         try {
             UserEvent userEvent = mapper.readerFor(UserEvent.class).readValue(message);
             UserData userData = userEvent.getUserData();
@@ -38,8 +39,10 @@ public class UserEventListener {
                         .lastName(userData.getLastName())
                         .username(userData.getUsername().toLowerCase())
                         .build();
+                logger.debug("adding new user {} to database", user.getUsername());
                 userRepository.addUser(user);
             } else if (userEvent.getEventType().equals(EventType.UPDATE)) {
+                logger.debug("updating existing user {}", userData.getUsername());
                 userRepository.updatePII(userData.getFirstName(),
                         userData.getLastName(),
                         userData.getEmail().toLowerCase(),
@@ -47,8 +50,8 @@ public class UserEventListener {
 
             }
         } catch (JsonProcessingException e) {
-            LOG.error("Error deserializing MQ for user event " + e.getMessage());
-            LOG.debug(Arrays.toString(e.getStackTrace()));
+            logger.error("Error deserializing MQ for user event " + e.getMessage());
+            logger.debug(Arrays.toString(e.getStackTrace()));
         }
     }
 }
