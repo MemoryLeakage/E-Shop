@@ -28,4 +28,9 @@ public class UserRepositoryImpl implements UserRepository {
         jpaUserRepository.updatePII(firstName,lastName,email,username);
     }
 
+    @Override
+    public Float getRatingByUsername(String username) {
+        return jpaUserRepository.getRatingByUsername(username);
+    }
+
 }

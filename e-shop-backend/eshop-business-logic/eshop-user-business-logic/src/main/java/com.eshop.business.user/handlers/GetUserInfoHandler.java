@@ -5,33 +5,35 @@ import com.eshop.models.entities.User;
 import com.eshop.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.eshop.repositories.UserRepository;
+
+import static com.eshop.utilities.Validators.validateNotNullArgument;
 
 public class GetUserInfoHandler {
 
     private final SecurityContext securityContext;
+    private final UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(GetUserInfoHandler.class);
 
-    public GetUserInfoHandler(SecurityContext securityContext) {
+    public GetUserInfoHandler(SecurityContext securityContext, UserRepository userRepository) {
         logger.debug("Constructing GetUserInfoHandler");
-        validateNotNull(securityContext, "security context cannot be null");
+        validateNotNullArgument(securityContext, "security context");
+        validateNotNullArgument(userRepository, "user repository");
         this.securityContext = securityContext;
-        logger.debug("Successfully constructed GetUserInfoHandler");
+        this.userRepository = userRepository;
     }
 
-    private void validateNotNull(SecurityContext securityContext, String message) {
-        if (securityContext == null)
-            throw new IllegalArgumentException(message);
-    }
 
     public GetUserInfoResponse handle() {
-        User user = securityContext.getUser();
+        User contextUser = securityContext.getUser();
+        Float rating = userRepository.getRatingByUsername(contextUser.getUsername());
         return new GetUserInfoResponse.Builder()
-                .username(user.getUsername())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .rate(user.getRating())
+                .username(contextUser.getUsername())
+                .firstName(contextUser.getFirstName())
+                .lastName(contextUser.getLastName())
+                .email(contextUser.getEmail())
+                .rate(rating)
                 .roles(securityContext.getRoles())
                 .build();
     }
