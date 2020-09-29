@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,15 +46,15 @@ public class GetProductImageHandlerTest {
     @Test
     void givenImageIdThatDoesntExist_whenHandling_thenThrowException() {
         GetProductImageHandler handler = new GetProductImageHandler(imageRepository);
-        Mockito.when(imageRepository.getByImageId(anyLong())).thenReturn(null);
+        Mockito.when(imageRepository.getByImageId(anyString())).thenReturn(null);
         NullPointerException thrown = assertThrows(NullPointerException.class,
-                () -> handler.handle(new GetProductImageRequest(1)));
+                () -> handler.handle(new GetProductImageRequest("1")));
         assertEquals("image does not exist", thrown.getMessage());
     }
 
     @Test
     void givenValidRequest_whenHandling_thenReturnExpected() throws IOException {
-        long imageId = 123;
+        String imageId = "123";
         long productId = 4;
         String imageName = "test-image.JPG";
         String imageContent = "MOCK-CONTENT";
@@ -67,10 +67,10 @@ public class GetProductImageHandlerTest {
         GetProductImageResponse response = handler.handle(request);
         String expectedImageContent = new String(Base64.getDecoder().decode(response.getBase64Image()));
         assertEquals(expectedImageContent, imageContent);
-        Mockito.verify(imageRepository, times(1)).getByImageId(anyLong());
+        Mockito.verify(imageRepository, times(1)).getByImageId(anyString());
     }
 
-    private void prepareMock(long imageId, String imageName, Path imagePath) {
+    private void prepareMock(String imageId, String imageName, Path imagePath) {
         Image image = getImage(imageName, imagePath);
         Mockito.when(imageRepository.getByImageId(imageId)).thenReturn(image);
     }
