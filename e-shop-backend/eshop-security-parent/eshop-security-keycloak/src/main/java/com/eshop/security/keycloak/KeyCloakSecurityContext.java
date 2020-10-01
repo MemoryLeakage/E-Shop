@@ -7,6 +7,8 @@ import org.keycloak.adapters.AdapterDeploymentContext;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,11 +21,13 @@ import java.util.Set;
 @Component
 public class KeyCloakSecurityContext implements SecurityContext {
 
+    private final static Logger logger = LoggerFactory.getLogger(KeyCloakSecurityContext.class);
     private final KeycloakDeployment keycloakDeployment;
     private Authentication authentication;
 
     @Autowired
     public KeyCloakSecurityContext(AdapterDeploymentContext adapterDeploymentContext) {
+        logger.debug("constructing keycloak security context");
         if(adapterDeploymentContext == null)
             throw new IllegalArgumentException("null adapter deployment context");
         this.keycloakDeployment = adapterDeploymentContext.resolveDeployment(null);
@@ -49,7 +53,10 @@ public class KeyCloakSecurityContext implements SecurityContext {
     }
 
     private boolean isNotKeycloakAuthentication() {
-        return !(authentication instanceof KeycloakAuthenticationToken);
+        boolean keycloakAuth = !(authentication instanceof KeycloakAuthenticationToken);
+        if(!keycloakAuth)
+            logger.error("Current security context is not a keycloak context.");
+        return keycloakAuth;
     }
 
     private AccessToken getAccessToken() {

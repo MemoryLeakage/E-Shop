@@ -30,7 +30,7 @@ import java.io.InputStream;
 @KeycloakConfiguration
 public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SecurityConfigs.class);
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfigs.class);
 
     @Bean
     public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {
@@ -77,7 +77,7 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
             KeycloakDeployment keycloakDeployment = KeycloakDeploymentBuilder.build(config);
             return new AdapterDeploymentContext(keycloakDeployment);
         } catch (IOException e) {
-            LOG.error("Unable to read keycloak configuration file cause: " + e.getMessage());
+            logger.error("Unable to read keycloak configuration file cause: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

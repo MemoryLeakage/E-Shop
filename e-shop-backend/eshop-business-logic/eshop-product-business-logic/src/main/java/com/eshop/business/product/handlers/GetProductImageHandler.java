@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class GetProductImageHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GetProductImageHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(GetProductImageHandler.class);
     private final ImageRepository imageRepository;
 
     public GetProductImageHandler(ImageRepository imageRepository) {
@@ -39,8 +39,8 @@ public class GetProductImageHandler {
             bufferedReader.lines().forEach(builder::append);
             return new GetProductImageResponse(new String(Base64.getEncoder().encode(builder.toString().getBytes())));
         } catch (IOException e) {
-            LOG.error(e.getMessage());
-            LOG.debug(Arrays.toString(e.getStackTrace()));
+            logger.error(e.getMessage());
+            logger.debug(Arrays.toString(e.getStackTrace()));
             throw new RuntimeException(e);
         }
     }
