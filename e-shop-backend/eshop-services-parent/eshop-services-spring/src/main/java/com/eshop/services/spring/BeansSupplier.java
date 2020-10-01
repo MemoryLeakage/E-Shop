@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 @Component
 public class BeansSupplier {
 
+    // TODO Change this value
     private final Path imagesPath = Paths.get("/images");
 
     @Bean

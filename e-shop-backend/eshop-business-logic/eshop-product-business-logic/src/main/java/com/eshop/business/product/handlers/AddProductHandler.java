@@ -24,6 +24,7 @@ public class AddProductHandler {
     public AddProductResponse handle(AddProductRequest request) {
         validateRequest(request);
         User user = securityContext.getUser();
+//        Todo take the user from the repo then pass it to build product method
         validateUser(user);
         Product product = buildProduct(request, user);
         product = productRepository.addProduct(product);
@@ -43,6 +44,7 @@ public class AddProductHandler {
                 .soldQuantity(0)
                 .availableQuantity(request.getAvailableQuantity())
                 .owner(user)
+//                TODO add categories of product and write unittests for this case
                 .category(null)
                 .build();
     }
@@ -61,7 +63,4 @@ public class AddProductHandler {
         validateMoreThanZero(request.getAvailableQuantity(), "available quantity");
         validateMoreThanZero(request.getPrice(), "price");
     }
-
-
-
 }

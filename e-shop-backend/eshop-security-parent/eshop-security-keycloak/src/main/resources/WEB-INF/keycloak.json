@@ -2,7 +2,7 @@
   "realm" : "eshop",
   "resource" : "eshop-ui",
   "ssl-required" : "external",
-  "use-resource-role-mappings" : false,
+  "use-resource-role-mappings" : true,
   "enable-cors" : true,
   "cors-max-age" : 1000,
   "cors-allowed-methods" : "POST, PUT, DELETE, GET",
