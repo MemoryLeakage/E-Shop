@@ -1,13 +1,13 @@
 package com.eshop.business.product.requests;
 
 public class GetProductImageRequest {
-    private long imageId;
+    private String imageId;
 
-    public GetProductImageRequest(long imageId) {
+    public GetProductImageRequest(String imageId) {
         this.imageId = imageId;
     }
 
-    public long getImageId() {
+    public String getImageId() {
         return imageId;
     }
 }

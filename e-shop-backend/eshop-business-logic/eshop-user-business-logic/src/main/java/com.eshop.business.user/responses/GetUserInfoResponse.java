@@ -9,7 +9,7 @@ public class GetUserInfoResponse {
     private String lastName;
     private String email;
     private Set<String> roles;
-    private float rating;
+    private Float rating;
 
     public String getUsername() {
         return username;
@@ -31,7 +31,7 @@ public class GetUserInfoResponse {
         return roles;
     }
 
-    public float getRating() {
+    public Float getRating() {
         return rating;
     }
 
@@ -41,7 +41,7 @@ public class GetUserInfoResponse {
         private String lastName;
         private String email;
         private Set<String> roles;
-        private float rate;
+        private Float rate;
 
         public Builder username(String username) {
             this.username = username;
@@ -68,7 +68,7 @@ public class GetUserInfoResponse {
             return this;
         }
 
-        public Builder rate(float rate) {
+        public Builder rate(Float rate) {
             this.rate = rate;
             return this;
         }

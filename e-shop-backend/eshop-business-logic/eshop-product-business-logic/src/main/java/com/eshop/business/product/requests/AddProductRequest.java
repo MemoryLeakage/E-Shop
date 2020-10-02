@@ -9,6 +9,7 @@ public class AddProductRequest {
     private double price;
     private int availableQuantity;
     private String description;
+//    TODO take the categories ids or names instead of the category object
     private List<Category> categories;
 
     private AddProductRequest(){}

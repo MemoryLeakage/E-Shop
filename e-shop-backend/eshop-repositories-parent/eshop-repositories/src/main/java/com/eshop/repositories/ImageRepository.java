@@ -8,5 +8,5 @@ public interface ImageRepository {
 
     void addImage(Image image);
 
-    Image getByImageId(long imageId);
+    Image getByImageId(String imageId);
 }

@@ -55,9 +55,12 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/actuator/health")
+                .antMatchers("/actuator/health", "/v1/products/images/*")
                 .permitAll()
-                .anyRequest().denyAll();
+                .antMatchers("/v1/user/info").authenticated()
+                .antMatchers("/v1/products", "/v1/products/*/images").hasRole("MERCHANT")
+                .anyRequest().denyAll()
+                .and().csrf().disable();
     }
 
 
@@ -69,7 +72,7 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
 
     @Bean
     @Override
-    protected AdapterDeploymentContext adapterDeploymentContext(){
+    protected AdapterDeploymentContext adapterDeploymentContext() {
         AdapterConfig config;
         try (InputStream inputStream = keycloakConfigFileResource.getInputStream()) {
             config = KeycloakDeploymentBuilder.loadAdapterConfig(inputStream);

@@ -13,6 +13,18 @@
     <packaging>pom</packaging>
     <modules>
         <module>eshop-services</module>
+        <module>eshop-services-spring</module>
     </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-user-business-logic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-product-business-logic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

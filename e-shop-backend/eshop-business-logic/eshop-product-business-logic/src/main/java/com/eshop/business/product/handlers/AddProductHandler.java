@@ -33,6 +33,7 @@ public class AddProductHandler {
         validateRequest(request);
         logger.debug("Attempting to fetch current authenticated user");
         User user = securityContext.getUser();
+//        Todo take the user from the repo then pass it to build product method
         validateUser(user);
         logger.debug("Authenticated user: {}", user.getUsername());
         Product product = buildProduct(request, user);
@@ -54,6 +55,7 @@ public class AddProductHandler {
                 .soldQuantity(0)
                 .availableQuantity(request.getAvailableQuantity())
                 .owner(user)
+//                TODO add categories of product and write unittests for this case
                 .category(null)
                 .build();
     }
@@ -73,7 +75,4 @@ public class AddProductHandler {
         validateMoreThanZero(request.getAvailableQuantity(), "available quantity");
         validateMoreThanZero(request.getPrice(), "price");
     }
-
-
-
 }

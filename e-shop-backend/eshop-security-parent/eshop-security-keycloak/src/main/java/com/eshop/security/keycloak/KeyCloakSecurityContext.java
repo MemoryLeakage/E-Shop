@@ -77,6 +77,6 @@ public class KeyCloakSecurityContext implements SecurityContext {
         if (isNotKeycloakAuthentication())
             return null;
         AccessToken accessToken = getAccessToken();
-        return accessToken.getResourceAccess(keycloakDeployment.getResourceName()).getRoles();
+        return accessToken.getResourceAccess().get(keycloakDeployment.getResourceName()).getRoles();
     }
 }
