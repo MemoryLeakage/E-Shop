@@ -1,0 +1,80 @@
+.flexColumn {
+    display: flex;
+    flex-direction: column;
+}
+
+.flexRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.mainContainer {
+    padding: 1%;
+    /*TODO this should be set on the application level*/
+    font-family: "Roboto", sans-serif;
+    background-color: white;
+    min-width: 242px;
+}
+
+
+.title {
+    margin: 0;
+    font-size: 2em;
+}
+
+.price {
+    font-size: 2em;
+    margin-top: 0.3em;
+    font-weight: bold;
+    color: #71cd14;
+}
+
+.oldPrice {
+    margin-left: 5px;
+    font-size: 0.5em;
+    color: grey;
+    text-decoration: line-through
+}
+
+.middleContainer {
+    min-width: 13em;
+    min-height: 3em;
+    color: #555;
+    padding: 0.5em 0.5em 0.5em 0;
+    margin-top: 1em;
+    justify-content: space-between;
+}
+
+.categoryContainer {
+    width: 100%;
+    margin-bottom: 0.5em;
+}
+
+.category {
+    margin-right: 2em;
+}
+
+.availabilityContainer {
+    width: 100%;
+    margin-top: 0.5em;
+}
+
+.availabilityField {
+    margin-right: 1.3em;
+}
+
+.description {
+    color: #555;
+    display: block;
+    border-top: 0.1em dotted #d5d5d5;
+    padding-top: 1.5em;
+    margin-top: 1.5em;
+    padding-right: 0.5em;
+    text-align: justify;
+}
+
+.buttonsContainer {
+    margin-top: 2em;
+    align-content: center;
+    width: 100%;
+}

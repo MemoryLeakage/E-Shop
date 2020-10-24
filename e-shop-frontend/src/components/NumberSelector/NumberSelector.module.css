@@ -1,0 +1,26 @@
+
+.label {
+    margin-right: 1%;
+    color: #555555;
+    align-self: center;
+}
+
+.input {
+    width: 5em;
+    height: 1.5em;
+    margin-right: -21px;
+    border: 1px solid #eeeeee;
+    padding-left: 5px;
+    align-self: center;
+}
+
+
+.flexRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.flexColumn {
+    display: flex;
+    flex-direction: column;
+}
