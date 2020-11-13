@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {IconButton, withStyles} from "@material-ui/core";
 import {ExpandLess, ExpandMore} from "@material-ui/icons";
 import styles from "./NumberSelector.module.css"
@@ -35,55 +35,47 @@ const IconButtonStyles = {
 const StyledExpandMore = withStyles(IconButtonStyles)(ExpandMore);
 const StyledExpandLess = withStyles(IconButtonStyles)(ExpandLess);
 
-export class NumberSelector extends React.Component<NumberSelectorProps, NumberSelectorState> {
-    readonly minValue: number;
-    readonly maxValue: number;
 
-    constructor(props: NumberSelectorProps) {
-        super(props);
-        this.minValue = this.props.minValue ? this.props.minValue : 1;
-        this.maxValue = this.props.maxValue ? this.props.maxValue : 10;
-        this.state = {
-            value: this.minValue,
-        };
-        this.decrease = this.decrease.bind(this);
-        this.increase = this.increase.bind(this);
+export function NumberSelector(props: NumberSelectorProps) {
+    const minValue: number = props.minValue ? props.minValue : 1;
+    const maxValue: number = props.maxValue ? props.maxValue : 10;
+    const [counter, setCounter] = useState<NumberSelectorState>({value: minValue});
+
+    function increase() {
+        setCounter((counter: NumberSelectorState) => ({
+            value: validateValue(counter.value + 1) ? counter.value + 1 : counter.value,
+        }));
     }
 
-
-    increase() {
-        this.setState((state: NumberSelectorState) => ({
-            value: this.validateValue(state.value + 1) ? state.value + 1 : state.value,
-        }), () => this.props.onValueChange(this.state.value));
-
+    function decrease() {
+        setCounter((counter: NumberSelectorState) => ({
+            value: validateValue(counter.value - 1) ? counter.value - 1 : counter.value,
+        }));
     }
 
-    decrease() {
-        this.setState((state: NumberSelectorState) => ({
-            value: this.validateValue(state.value - 1) ? state.value - 1 : state.value,
-        }), () => this.props.onValueChange(this.state.value));
+    useEffect(() => {
+        props.onValueChange(counter.value)
+    }, [counter])
+
+
+    function validateValue(value: number) {
+        return (value >= minValue && value <= maxValue);
     }
 
-    validateValue(value: number) {
-        return (value >= this.minValue && value <= this.maxValue);
-    }
-
-    render() {
-        return (
+    return (
+        <div className={styles.flexRow}>
+            <label className={styles.label}>{props.label}:</label>
             <div className={styles.flexRow}>
-                <label className={styles.label}>{this.props.label}:</label>
-                <div className={styles.flexRow}>
-                    <input className={styles.input} type="text" value={this.state.value}/>
-                    <div className={styles.flexColumn}>
-                        <ArrowButton style={{marginBottom: "-25%"}} onClick={this.increase}>
-                            <StyledExpandLess/>
-                        </ArrowButton>
-                        <ArrowButton style={{marginTop: "-25%"}} onClick={this.decrease}>
-                            <StyledExpandMore/>
-                        </ArrowButton>
-                    </div>
+                <input className={styles.input} type="text" value={counter.value}/>
+                <div className={styles.flexColumn}>
+                    <ArrowButton style={{marginBottom: "-25%"}} onClick={increase}>
+                        <StyledExpandLess/>
+                    </ArrowButton>
+                    <ArrowButton style={{marginTop: "-25%"}} onClick={decrease}>
+                        <StyledExpandMore/>
+                    </ArrowButton>
                 </div>
             </div>
-        );
-    }
+        </div>
+    );
 }

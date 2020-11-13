@@ -1,4 +1,7 @@
-import {ProductDetailsOverview, ProductDetailsOverviewProps} from "../components/ProductDetails/ProductDetailsOverview";
+import {
+    ProductDetailsOverview,
+    ProductDetailsOverviewProps
+} from "../components/ProductDetails/ProductDetailsOverview/ProductDetailsOverview";
 import {Meta, Story} from "@storybook/react";
 import React from "react";
 
@@ -15,5 +18,6 @@ Default.args = {
     oldPrice: "$189.99",
     category: "Household",
     availability: true,
+    productId: "759c9667-9862-44a9-a476-b75fe9bde602",
     description: "Mill Oil is an innovative oil filled radiator with the most modern technology. If you are looking for something that can make your interior look awesome, and at the same time give you the pleasant warm feeling during the winter",
 }
