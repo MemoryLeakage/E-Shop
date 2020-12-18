@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.eshop.business.product.requests.AddProductImagesRequest;
 import com.eshop.business.product.responses.AddProductImagesResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
-import com.eshop.models.entities.Category;
 import com.eshop.models.entities.Image;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
@@ -218,7 +217,7 @@ public class AddProductImagesHandlerTest {
                 .availableQuantity(100)
                 .availabilityState(ProductAvailabilityState.AVAILABLE)
                 .owner(getUser(owner))
-                .category(null)
+                .categories(null)
                 .build();
     }
 

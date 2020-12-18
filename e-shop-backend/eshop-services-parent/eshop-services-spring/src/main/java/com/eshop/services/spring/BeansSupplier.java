@@ -4,9 +4,7 @@ import com.eshop.business.product.handlers.AddProductHandler;
 import com.eshop.business.product.handlers.AddProductImagesHandler;
 import com.eshop.business.product.handlers.GetProductImageHandler;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
-import com.eshop.repositories.ImageRepository;
-import com.eshop.repositories.ProductRepository;
-import com.eshop.repositories.UserRepository;
+import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,13 +17,15 @@ import java.nio.file.Paths;
 public class BeansSupplier {
 
     // TODO Change this value
-    private final Path imagesPath = Paths.get("/images");
+    private final Path imagesPath = Paths.get("/home/ammar/tmp/images");
 
     @Bean
     @Autowired
     public AddProductHandler addProductHandler(SecurityContext securityContext,
-                                               ProductRepository productRepository) {
-        return new AddProductHandler(securityContext, productRepository);
+                                               ProductRepository productRepository,
+                                               CategoryRepository categoryRepository,
+                                               ProductCategoryRepository productCategoryRepository) {
+        return new AddProductHandler(securityContext, productRepository, categoryRepository,productCategoryRepository);
     }
 
     @Bean

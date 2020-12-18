@@ -14,6 +14,22 @@ public class ProductCategoryId implements Serializable {
     @Column(name = "category_id")
     private String categoryId;
 
+    public ProductCategoryId(String productId, String categoryId) {
+        this.productId = productId;
+        this.categoryId = categoryId;
+    }
+
+    public ProductCategoryId() {
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
