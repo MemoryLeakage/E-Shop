@@ -9,4 +9,6 @@ public interface UserRepository {
     void updatePII(String firstName, String lastName, String email, String username);
 
     Float getRatingByUsername(String username);
+
+    User getUserByUsername(String username);
 }

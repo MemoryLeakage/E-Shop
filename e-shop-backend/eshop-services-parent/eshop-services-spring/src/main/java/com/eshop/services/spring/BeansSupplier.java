@@ -7,6 +7,8 @@ import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +19,11 @@ import java.nio.file.Paths;
 public class BeansSupplier {
 
     // TODO Change this value
-    private final Path imagesPath = Paths.get("/home/ammar/tmp/images");
+    private final Path imagesPath = Paths.get("/home/abdelrahman/tmp/images");
 
     @Bean
     @Autowired
-    public AddProductHandler addProductHandler(SecurityContext securityContext,
+    public AddProductHandler addProductHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
                                                ProductRepository productRepository,
                                                CategoryRepository categoryRepository,
                                                ProductCategoryRepository productCategoryRepository) {
@@ -30,7 +32,7 @@ public class BeansSupplier {
 
     @Bean
     @Autowired
-    public AddProductImagesHandler addProductImagesHandler(SecurityContext securityContext,
+    public AddProductImagesHandler addProductImagesHandler(@Qualifier("keyCloakSecurityContext") SecurityContext securityContext,
                                                            ProductRepository productRepository,
                                                            ImageRepository imageRepository) {
         return new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
@@ -44,7 +46,7 @@ public class BeansSupplier {
 
     @Bean
     @Autowired
-    public GetUserInfoHandler getUserInfoHandler(SecurityContext securityContext,
+    public GetUserInfoHandler getUserInfoHandler(@Qualifier("keyCloakSecurityContext") SecurityContext securityContext,
                                                  UserRepository userRepository) {
         return new GetUserInfoHandler(securityContext, userRepository);
     }

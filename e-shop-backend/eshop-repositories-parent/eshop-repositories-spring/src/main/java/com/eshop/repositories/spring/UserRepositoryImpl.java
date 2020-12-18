@@ -33,4 +33,9 @@ public class UserRepositoryImpl implements UserRepository {
         return jpaUserRepository.getRatingByUsername(username);
     }
 
+    @Override
+    public User getUserByUsername(String username) {
+        return jpaUserRepository.getUserByUsername(username);
+    }
+
 }

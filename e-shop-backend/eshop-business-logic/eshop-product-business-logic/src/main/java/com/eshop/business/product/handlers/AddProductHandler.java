@@ -42,7 +42,6 @@ public class AddProductHandler {
         validateRequest(request);
         logger.debug("Attempting to fetch current authenticated user");
         User user = securityContext.getUser();
-//        Todo take the user from the repo then pass it to build product method
         validateUser(user);
         logger.debug("Authenticated user: {}", user.getUsername());
         Product product = buildProduct(request, user);
