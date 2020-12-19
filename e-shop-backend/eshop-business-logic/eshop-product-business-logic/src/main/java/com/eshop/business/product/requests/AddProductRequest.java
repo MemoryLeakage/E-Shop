@@ -1,7 +1,5 @@
 package com.eshop.business.product.requests;
 
-import com.eshop.models.entities.Category;
-
 import java.util.List;
 
 public class AddProductRequest {
@@ -9,8 +7,7 @@ public class AddProductRequest {
     private double price;
     private int availableQuantity;
     private String description;
-//    TODO take the categories ids or names instead of the category object
-    private List<Category> categories;
+    private List<String> categoriesIds;
 
     private AddProductRequest(){}
 
@@ -30,8 +27,8 @@ public class AddProductRequest {
         return description;
     }
 
-    public List<Category> getCategories() {
-        return categories;
+    public List<String> getCategoriesIds() {
+        return categoriesIds;
     }
 
     public static class Builder {
@@ -39,7 +36,7 @@ public class AddProductRequest {
         private float price;
         private int availableQuantity;
         private String description;
-        private List<Category> categories;
+        private List<String> categoriesIds;
 
 
         public Builder productName(String productName) {
@@ -62,15 +59,15 @@ public class AddProductRequest {
             return this;
         }
 
-        public Builder category(List<Category> categories) {
-            this.categories = categories;
+        public Builder categories(List<String> categoriesIds) {
+            this.categoriesIds = categoriesIds;
             return this;
         }
 
         public AddProductRequest build(){
             AddProductRequest request = new AddProductRequest();
             request.availableQuantity = this.availableQuantity;
-            request.categories = this.categories;
+            request.categoriesIds = this.categoriesIds;
             request.description = this.description;
             request.price = this.price;
             request.productName =  this.productName;

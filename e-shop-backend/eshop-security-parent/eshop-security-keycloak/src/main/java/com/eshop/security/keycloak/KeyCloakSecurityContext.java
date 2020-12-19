@@ -10,6 +10,7 @@ import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -53,10 +54,10 @@ public class KeyCloakSecurityContext implements SecurityContext {
     }
 
     private boolean isNotKeycloakAuthentication() {
-        boolean keycloakAuth = !(authentication instanceof KeycloakAuthenticationToken);
-        if(!keycloakAuth)
+        boolean isNotKeycloakAuth = !(authentication instanceof KeycloakAuthenticationToken);
+        if(isNotKeycloakAuth)
             logger.error("Current security context is not a keycloak context.");
-        return keycloakAuth;
+        return isNotKeycloakAuth;
     }
 
     private AccessToken getAccessToken() {

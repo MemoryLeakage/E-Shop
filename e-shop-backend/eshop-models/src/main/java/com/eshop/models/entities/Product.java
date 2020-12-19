@@ -34,7 +34,7 @@ public class Product {
     private String description;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User owner;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
@@ -43,7 +43,7 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<CartDetails> cartDetailsList;
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<ProductCategory> categories;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
@@ -57,7 +57,7 @@ public class Product {
         return owner;
     }
 
-    public List<ProductCategory> getCategory() {
+    public List<ProductCategory> getCategories() {
         return categories;
     }
 
@@ -128,7 +128,7 @@ public class Product {
         private String description;
         private User owner;
         private List<Image> images;
-        private final List<ProductCategory> categories = new ArrayList<>();
+        private List<ProductCategory> categories;
 
         public Builder id(String id) {
             this.id = id;
@@ -140,8 +140,8 @@ public class Product {
             return this;
         }
 
-        public Builder category(ProductCategory category) {
-            this.categories.add(category);
+        public Builder categories(List<ProductCategory> categories) {
+            this.categories = categories;
             return this;
         }
 

@@ -2,12 +2,15 @@ package com.eshop.business.product.handlers;
 
 import com.eshop.business.product.requests.AddProductRequest;
 import com.eshop.business.product.responses.AddProductResponse;
-import com.eshop.models.entities.Product;
-import com.eshop.models.entities.User;
+import com.eshop.models.entities.*;
+import com.eshop.repositories.CategoryRepository;
+import com.eshop.repositories.ProductCategoryRepository;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
 import static com.eshop.utilities.Validators.*;
@@ -18,13 +21,19 @@ public class AddProductHandler {
 
     private final ProductRepository productRepository;
     private final SecurityContext securityContext;
+    private final CategoryRepository categoryRepository;
+    private final ProductCategoryRepository productCategoryRepository;
 
-    public AddProductHandler(SecurityContext securityContext, ProductRepository repository) {
+    public AddProductHandler(SecurityContext securityContext,
+                             ProductRepository repository,
+                             CategoryRepository categoryRepository,
+                             ProductCategoryRepository productCategoryRepository) {
         logger.debug("Constructing AddProductHandler");
-        validateNotNullArgument(securityContext, "security context");
-        validateNotNullArgument(repository, "product repository");
+        validateArguments(securityContext, repository, categoryRepository, productCategoryRepository);
         this.securityContext = securityContext;
-        productRepository = repository;
+        this.categoryRepository = categoryRepository;
+        this.productCategoryRepository = productCategoryRepository;
+        this.productRepository = repository;
         logger.debug("Successfully constructed AddProductHandler");
     }
 
@@ -33,16 +42,32 @@ public class AddProductHandler {
         validateRequest(request);
         logger.debug("Attempting to fetch current authenticated user");
         User user = securityContext.getUser();
-//        Todo take the user from the repo then pass it to build product method
         validateUser(user);
         logger.debug("Authenticated user: {}", user.getUsername());
         Product product = buildProduct(request, user);
         product = productRepository.addProduct(product);
-        logger.debug("Product with productid {} successfully added", product.getId());
+        logger.debug("Product with product-id {} successfully added", product.getId());
+
+        List<String> categoriesIds = request.getCategoriesIds();
+        List<Category> categories = categoryRepository.getCategoriesByIds(categoriesIds);
+        addProductCategories(product, categories);
+
         return new AddProductResponse(product.getProductName(),
                 product.getAvailableQuantity(),
                 product.getPrice(),
                 product.getId());
+    }
+
+    private void addProductCategories(Product product, List<Category> categories) {
+        // TODO we may make this as Stored Procedure
+        String productId = product.getId();
+        logger.debug("Assigning categories {} to product with Id of '{}'", categories.toString(), productId);
+        for (Category category : categories) {
+            ProductCategoryId productCategoryId = new ProductCategoryId(productId, category.getId());
+            ProductCategory productCategory = new ProductCategory(productCategoryId, category, product);
+            productCategoryRepository.addProductCategory(productCategory);
+        }
+        logger.debug("Categories are assigned successfully to the product '{}'", productId);
     }
 
     private Product buildProduct(AddProductRequest request, User user) {
@@ -55,8 +80,7 @@ public class AddProductHandler {
                 .soldQuantity(0)
                 .availableQuantity(request.getAvailableQuantity())
                 .owner(user)
-//                TODO add categories of product and write unittests for this case
-                .category(null)
+                .categories(null)
                 .build();
     }
 
@@ -69,10 +93,20 @@ public class AddProductHandler {
 
     private void validateRequest(AddProductRequest request) {
         validateNotNullArgument(request, "request");
-        validateNotNullArgument(request.getCategories(), "category");
+        validateNotNullArgument(request.getCategoriesIds(), "category");
         validateNotNullArgument(request.getDescription(), "description");
         validateNotNullArgument(request.getProductName(), "product name");
         validateMoreThanZero(request.getAvailableQuantity(), "available quantity");
         validateMoreThanZero(request.getPrice(), "price");
+    }
+
+    private void validateArguments(SecurityContext securityContext,
+                                   ProductRepository repository,
+                                   CategoryRepository categoryRepository,
+                                   ProductCategoryRepository productCategoryRepository) {
+        validateNotNullArgument(securityContext, "security context");
+        validateNotNullArgument(repository, "product repository");
+        validateNotNullArgument(categoryRepository, "category repository");
+        validateNotNullArgument(productCategoryRepository, "product category repository");
     }
 }

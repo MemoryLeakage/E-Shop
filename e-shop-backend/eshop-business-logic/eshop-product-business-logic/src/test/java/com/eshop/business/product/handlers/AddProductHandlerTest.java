@@ -2,20 +2,20 @@ package com.eshop.business.product.handlers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import com.eshop.business.product.requests.AddProductRequest;
 import com.eshop.business.product.responses.AddProductResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
-import com.eshop.models.entities.Category;
-import com.eshop.models.entities.Product;
-import com.eshop.models.entities.User;
+import com.eshop.models.entities.*;
+import com.eshop.repositories.CategoryRepository;
+import com.eshop.repositories.ProductCategoryRepository;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -30,27 +30,46 @@ public class AddProductHandlerTest {
     private ProductRepository productRepo;
     @Mock
     private SecurityContext securityContext;
+    @Mock
+    private CategoryRepository categoryRepository;
+    @Mock
+    private ProductCategoryRepository productCategoryRepository;
+
     private AddProductHandler productHandler;
 
     @BeforeEach
     void setUp() {
-        this.productHandler = new AddProductHandler(securityContext, productRepo);
+        this.productHandler = new AddProductHandler(securityContext, productRepo, categoryRepository, productCategoryRepository);
     }
 
     @Test
     void givenNullSecurityContext_whenConstructing_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new AddProductHandler(null, productRepo));
+                () -> new AddProductHandler(null, productRepo, categoryRepository, productCategoryRepository));
         assertEquals("security context can not be null", thrown.getMessage());
 
     }
 
     @Test
-    void givenNullProductRepository_whenConstructing_thenThrowException(){
+    void givenNullProductRepository_whenConstructing_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new AddProductHandler(securityContext, null));
+                () -> new AddProductHandler(securityContext, null, categoryRepository, productCategoryRepository));
         assertEquals("product repository can not be null", thrown.getMessage());
 
+    }
+
+    @Test
+    void givenNullCategoryRepository_whenConstructing_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> new AddProductHandler(securityContext, productRepo, null, productCategoryRepository));
+        assertEquals("category repository can not be null", thrown.getMessage());
+    }
+
+    @Test
+    void givenNullProductCategoryRepository_whenConstructing_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> new AddProductHandler(securityContext, productRepo, categoryRepository, null));
+        assertEquals("product category repository can not be null", thrown.getMessage());
     }
 
     @Test
@@ -63,7 +82,7 @@ public class AddProductHandlerTest {
     @Test
     void givenNullProductCategory_whenAddingProduct_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> productHandler.handle(getValidRequestBuilder().category(null).build()));
+                () -> productHandler.handle(getValidRequestBuilder().categories(null).build()));
         assertEquals("category can not be null", thrown.getMessage());
     }
 
@@ -75,7 +94,7 @@ public class AddProductHandlerTest {
     }
 
     @Test
-    void givenNullProductName_whenAddingProduct_thenThrowException(){
+    void givenNullProductName_whenAddingProduct_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> productHandler.handle(getValidRequestBuilder().productName(null).build()));
         assertEquals("product name can not be null", thrown.getMessage());
@@ -87,6 +106,7 @@ public class AddProductHandlerTest {
                 () -> productHandler.handle(getValidRequestBuilder().price(-5).build()));
         assertEquals("price has to be greater than 0", thrown.getMessage());
     }
+
     @Test
     void givenInvalidNegativeQuantity_whenAddingProduct_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
@@ -96,8 +116,8 @@ public class AddProductHandlerTest {
 
     @Test
     void givenNonAuthenticatedUser_whenAddingProduct_thenThrowException() {
-        Mockito.when(securityContext.getUser()).thenReturn(null);
-        AddProductHandler addProductHandler = new AddProductHandler(securityContext, this.productRepo);
+        when(securityContext.getUser()).thenReturn(null);
+        AddProductHandler addProductHandler = new AddProductHandler(securityContext, productRepo, categoryRepository, productCategoryRepository);
         IllegalStateException thrown = assertThrows(IllegalStateException.class,
                 () -> addProductHandler.handle(getValidRequestBuilder().build()));
         assertEquals("user is not authenticated", thrown.getMessage());
@@ -105,40 +125,69 @@ public class AddProductHandlerTest {
 
     @Test
     void givenValidRequest_whenAddingProduct_thenAddProduct() {
-        prepareMock();
+        List<ProductCategory> productCategoryList = new ArrayList<>();
+        prepareProductMock();
+        prepareCategoryMocks(productCategoryList);
 
         AddProductRequest request = getValidRequestBuilder().build();
         AddProductResponse response = productHandler.handle(request);
-        Mockito.verify(productRepo,Mockito.times(1)).addProduct(any(Product.class));
-        Mockito.verify(securityContext,Mockito.times(1)).getUser();
+        verify(productRepo, times(1)).addProduct(any(Product.class));
+        verify(securityContext, times(1)).getUser();
+        verify(productCategoryRepository, times(1)).addProductCategory(any(ProductCategory.class));
+        verify(categoryRepository, times(1)).getCategoriesByIds(anyList());
+
         validateResponse(request, response);
-        validateAddedProduct(request, response);
+        Product product = productRepo.getProductById(response.getProductId());
+        validateAddedProduct(request, product);
+
+        assertEquals(1, productCategoryList.size());
+        ProductCategory productCategory = productCategoryList.get(0);
+        assertEquals(product, productCategory.getProduct());
+
+        String categoryId = request.getCategoriesIds().get(0);
+        assertEquals(getValidCategory(categoryId), productCategory.getCategory());
+        assertEquals(categoryId, productCategory.getId().getCategoryId());
+        assertEquals(product.getId(), productCategory.getId().getProductId());
+
     }
 
-    private void prepareMock() {
+    private void prepareProductMock() {
         List<Product> products = new ArrayList<>();
-        Mockito.when(securityContext.getUser()).thenReturn(getUser("test-user"));
-        Mockito.when(productRepo.addProduct(any(Product.class)))
+        when(securityContext.getUser()).thenReturn(getUser("test-user"));
+        when(productRepo.addProduct(any(Product.class)))
                 .thenAnswer(invocation -> {
                     Product product = invocation.getArgument(0);
                     product = addIdAndGetProduct(product, products.size());
                     products.add(product);
                     return product;
                 });
-        Mockito.when(productRepo.getProductById(anyString())).thenAnswer(invocation -> {
+        when(productRepo.getProductById(anyString())).thenAnswer(invocation -> {
             String id = invocation.getArgument(0);
             return products.stream().filter(product -> product.getId().equals(id)).findAny().orElseThrow();
         });
     }
 
-    private void validateAddedProduct(AddProductRequest request, AddProductResponse response) {
-        Product product = productRepo.getProductById(response.getProductId());
+    private void prepareCategoryMocks(List<ProductCategory> productCategoryList) {
+        when(categoryRepository.getCategoriesByIds(anyList())).then(invocation -> {
+            List<String> ids = invocation.getArgument(0);
+            return Collections.singletonList(getValidCategory(ids.get(0)));
+        });
+        doAnswer(invocation -> {
+            ProductCategory productCategory = invocation.getArgument(0);
+            productCategoryList.add(productCategory);
+            return null;
+        }).when(productCategoryRepository).addProductCategory(any(ProductCategory.class));
+    }
+
+    private Category getValidCategory(String id) {
+        return new Category(id, "Mobiles");
+    }
+
+    private void validateAddedProduct(AddProductRequest request, Product product) {
         assertNotNull(product);
         assertEquals(request.getAvailableQuantity(), product.getAvailableQuantity());
         assertEquals(request.getProductName(), product.getProductName());
         assertEquals(request.getPrice(), product.getPrice());
-        // TODO retrieve categories from product and then call assertEquals
-//        assertEquals(request.getCategories(), product.getCategory());
         assertEquals(request.getDescription(), product.getDescription());
         assertEquals(0, product.getSoldQuantity());
         assertEquals(ProductAvailabilityState.AVAILABLE, product.getAvailabilityState());
@@ -155,7 +204,7 @@ public class AddProductHandlerTest {
     private AddProductRequest.Builder getValidRequestBuilder() {
         AddProductRequest.Builder builder = new AddProductRequest.Builder();
         builder.availableQuantity(10)
-                .category(Collections.singletonList(new Category("Mobiles")))
+                .categories(Collections.singletonList("123"))
                 .description("A good product")
                 .price(10)
                 .productName("a good washing machine");
@@ -173,7 +222,7 @@ public class AddProductHandlerTest {
 
     private Product addIdAndGetProduct(Product product, long id) {
         product = new Product.Builder()
-                .category(null)
+                .categories(null)
                 .owner(product.getOwner())
                 .availabilityState(product.getAvailabilityState())
                 .availableQuantity(product.getAvailableQuantity())

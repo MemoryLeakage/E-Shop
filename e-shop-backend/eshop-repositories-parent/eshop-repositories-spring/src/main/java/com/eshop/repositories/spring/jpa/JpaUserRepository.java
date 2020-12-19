@@ -19,4 +19,6 @@ public interface JpaUserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT user.rating FROM User user WHERE user.username=:username")
     Float getRatingByUsername(String username);
+
+    User getUserByUsername(String username);
 }
