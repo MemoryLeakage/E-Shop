@@ -2,8 +2,10 @@ package com.eshop.services.spring;
 
 import com.eshop.business.product.handlers.AddProductHandler;
 import com.eshop.business.product.handlers.AddProductImagesHandler;
+import com.eshop.business.product.handlers.GetProductDetailsHandler;
 import com.eshop.business.product.handlers.GetProductImageHandler;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
+import com.eshop.models.entities.Product;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +53,9 @@ public class BeansSupplier {
         return new GetUserInfoHandler(securityContext, userRepository);
     }
 
+    @Bean
+    @Autowired
+    public GetProductDetailsHandler getProductDetailsHandler(ProductRepository productRepository){
+        return new GetProductDetailsHandler(productRepository);
+    }
 }
