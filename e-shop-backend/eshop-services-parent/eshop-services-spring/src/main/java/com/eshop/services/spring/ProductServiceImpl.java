@@ -2,6 +2,7 @@ package com.eshop.services.spring;
 
 import com.eshop.business.product.handlers.AddProductHandler;
 import com.eshop.business.product.handlers.AddProductImagesHandler;
+import com.eshop.business.product.handlers.GetProductDetailsHandler;
 import com.eshop.business.product.handlers.GetProductImageHandler;
 import com.eshop.business.product.requests.AddProductImagesRequest;
 import com.eshop.business.product.requests.AddProductRequest;
@@ -14,25 +15,33 @@ import com.eshop.business.product.responses.GetProductImageResponse;
 import com.eshop.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Component
+@Validated
 public class ProductServiceImpl implements ProductService {
 
     private final AddProductHandler addProductHandler;
     private final AddProductImagesHandler addProductImagesHandler;
     private final GetProductImageHandler getProductImageHandler;
+    private final GetProductDetailsHandler getProductDetailsHandler;
+
 
     @Autowired
     public ProductServiceImpl(AddProductHandler addProductHandler,
                               AddProductImagesHandler addProductImagesHandler,
-                              GetProductImageHandler getProductImageHandler) {
+                              GetProductImageHandler getProductImageHandler,
+                              GetProductDetailsHandler productDetailsHandler) {
         this.addProductHandler = addProductHandler;
         this.addProductImagesHandler = addProductImagesHandler;
         this.getProductImageHandler = getProductImageHandler;
+        this.getProductDetailsHandler = productDetailsHandler;
     }
 
     @Override
-    public AddProductResponse addProduct(AddProductRequest request) {
+    public AddProductResponse addProduct( AddProductRequest request) {
         return addProductHandler.handle(request);
     }
 
@@ -47,7 +56,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public GetProductDetailsResponse getProductDetails(GetProductDetailsRequest request) {
-        return getProductDetails(request);
+        return getProductDetailsHandler.handle(request);
     }
 }

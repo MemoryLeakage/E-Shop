@@ -14,6 +14,7 @@ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -55,10 +56,11 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/actuator/health", "/v1/products/images/*")
+                .mvcMatchers(HttpMethod.GET,"/actuator/health", "/v1/products/images/?*")
                 .permitAll()
-                .antMatchers("/v1/user/info").authenticated()
-                .antMatchers("/v1/products", "/v1/products/*/images").hasRole("MERCHANT")
+                .mvcMatchers(HttpMethod.GET,"/v1/products/?*").permitAll()
+                .mvcMatchers(HttpMethod.GET,"/v1/user/info").authenticated()
+                .mvcMatchers(HttpMethod.POST,"/v1/products", "/v1/products/*/images").hasRole("MERCHANT")
                 .anyRequest().denyAll()
                 .and().csrf().disable();
     }

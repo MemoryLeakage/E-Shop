@@ -28,16 +28,6 @@ public class Validators {
                 object);
     }
 
-    public static <T> void validateNotNull(Object object,
-                                           Function<String, RuntimeException> exceptionFunction,
-                                           String message){
-        validate(Objects::isNull,
-                exceptionFunction,
-                message,
-                object);
-    }
-
-
     public static  <T> void validate(Predicate<T> predicate,
                                      Function<String, RuntimeException> exceptionFunction,
                                      String message,

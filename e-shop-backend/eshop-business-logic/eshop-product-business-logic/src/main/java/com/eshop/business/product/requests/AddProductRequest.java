@@ -1,12 +1,21 @@
 package com.eshop.business.product.requests;
 
+import javax.validation.constraints.*;
 import java.util.List;
 
 public class AddProductRequest {
+    @NotBlank
+    @Pattern(regexp = "[A-Za-z ,0-9.()]*")
     private String productName;
+    @Positive
     private double price;
+    @PositiveOrZero
     private int availableQuantity;
+    @NotBlank
+    @Pattern(regexp = "[A-Za-z ,0-9.()]*")
     private String description;
+    @Size(min = 1)
+    //TODO validate the string contents
     private List<String> categoriesIds;
 
     private AddProductRequest(){}
