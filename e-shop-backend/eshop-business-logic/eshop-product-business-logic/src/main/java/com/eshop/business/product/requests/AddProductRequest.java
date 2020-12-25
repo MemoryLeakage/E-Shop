@@ -1,24 +1,31 @@
 package com.eshop.business.product.requests;
 
+import com.eshop.validators.annotation.ListPattern;
+
 import javax.validation.constraints.*;
 import java.util.List;
 
 public class AddProductRequest {
     @NotBlank
-    @Pattern(regexp = "[A-Za-z ,0-9.()]*")
+    @Pattern(regexp = "[A-Za-z ,0-9.()]*",
+            message = "{eshop.message.validation.productName}")
     private String productName;
     @Positive
     private double price;
     @PositiveOrZero
     private int availableQuantity;
     @NotBlank
-    @Pattern(regexp = "[A-Za-z ,0-9.()]*")
+    @Pattern(regexp = "[A-Za-z ,0-9.()]*",
+            message = "{eshop.message.validation.description}")
     private String description;
-    @Size(min = 1)
-    //TODO validate the string contents
+    @NotEmpty
+    @ListPattern(
+            regex = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            message = "{eshop.message.validation.categoriesIds}")
     private List<String> categoriesIds;
 
-    private AddProductRequest(){}
+    private AddProductRequest() {
+    }
 
     public String getProductName() {
         return productName;
@@ -73,13 +80,13 @@ public class AddProductRequest {
             return this;
         }
 
-        public AddProductRequest build(){
+        public AddProductRequest build() {
             AddProductRequest request = new AddProductRequest();
             request.availableQuantity = this.availableQuantity;
             request.categoriesIds = this.categoriesIds;
             request.description = this.description;
             request.price = this.price;
-            request.productName =  this.productName;
+            request.productName = this.productName;
             return request;
         }
 

@@ -23,6 +23,7 @@
         <module>eshop-models</module>
         <module>eshop-repositories-parent</module>
         <module>eshop-utilities</module>
+        <module>eshop-validators</module>
     </modules>
     <packaging>pom</packaging>
 
