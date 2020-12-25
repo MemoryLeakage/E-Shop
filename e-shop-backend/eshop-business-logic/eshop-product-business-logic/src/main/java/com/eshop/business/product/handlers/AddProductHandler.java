@@ -1,5 +1,6 @@
 package com.eshop.business.product.handlers;
 
+import com.eshop.business.core.Handler;
 import com.eshop.business.product.requests.AddProductRequest;
 import com.eshop.business.product.responses.AddProductResponse;
 import com.eshop.models.entities.*;
@@ -15,7 +16,7 @@ import java.util.List;
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
 import static com.eshop.utilities.Validators.*;
 
-public class AddProductHandler {
+public class AddProductHandler implements Handler<AddProductRequest, AddProductResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(AddProductHandler.class);
 

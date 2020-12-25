@@ -9,18 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eshop-product-business-logic</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.eshop</groupId>
-            <artifactId>eshop-business-logic-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
+    <artifactId>eshop-business-logic-core</artifactId>
 
 
 </project>

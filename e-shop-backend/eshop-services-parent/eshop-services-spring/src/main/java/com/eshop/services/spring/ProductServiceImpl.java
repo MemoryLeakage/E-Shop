@@ -23,41 +23,31 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class ProductServiceImpl implements ProductService {
 
-    private final AddProductHandler addProductHandler;
-    private final AddProductImagesHandler addProductImagesHandler;
-    private final GetProductImageHandler getProductImageHandler;
-    private final GetProductDetailsHandler getProductDetailsHandler;
-
+    private final HandlerFactory factory;
 
     @Autowired
-    public ProductServiceImpl(AddProductHandler addProductHandler,
-                              AddProductImagesHandler addProductImagesHandler,
-                              GetProductImageHandler getProductImageHandler,
-                              GetProductDetailsHandler productDetailsHandler) {
-        this.addProductHandler = addProductHandler;
-        this.addProductImagesHandler = addProductImagesHandler;
-        this.getProductImageHandler = getProductImageHandler;
-        this.getProductDetailsHandler = productDetailsHandler;
+    public ProductServiceImpl(HandlerFactory factory) {
+        this.factory = factory;
     }
 
     @Override
-    public AddProductResponse addProduct( AddProductRequest request) {
-        return addProductHandler.handle(request);
+    public AddProductResponse addProduct(AddProductRequest request) {
+        return factory.getHandler(AddProductHandler.class).handle(request);
     }
 
     @Override
     public AddProductImagesResponse addProductImage(AddProductImagesRequest request) {
-        return addProductImagesHandler.handle(request);
+        return factory.getHandler(AddProductImagesHandler.class).handle(request);
     }
 
     @Override
     public GetProductImageResponse getProductImage(GetProductImageRequest request) {
-        return getProductImageHandler.handle(request);
+        return factory.getHandler(GetProductImageHandler.class).handle(request);
     }
 
     @Override
     @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
     public GetProductDetailsResponse getProductDetails(GetProductDetailsRequest request) {
-        return getProductDetailsHandler.handle(request);
+        return factory.getHandler(GetProductDetailsHandler.class).handle(request);
     }
 }

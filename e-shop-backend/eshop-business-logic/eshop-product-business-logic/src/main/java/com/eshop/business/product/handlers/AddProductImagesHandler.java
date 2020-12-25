@@ -1,5 +1,6 @@
 package com.eshop.business.product.handlers;
 
+import com.eshop.business.core.Handler;
 import com.eshop.business.product.requests.AddProductImagesRequest;
 import com.eshop.business.product.responses.AddProductImagesResponse;
 import com.eshop.models.entities.Image;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 
 import static com.eshop.utilities.Validators.validateNotNullArgument;
-public class AddProductImagesHandler {
+public class AddProductImagesHandler implements Handler<AddProductImagesRequest, AddProductImagesResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(AddProductImagesHandler.class);
 

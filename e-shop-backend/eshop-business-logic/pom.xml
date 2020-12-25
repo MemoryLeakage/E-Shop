@@ -16,6 +16,7 @@
         <module>eshop-cart-business-logic</module>
         <module>eshop-product-business-logic</module>
         <module>eshop-user-business-logic</module>
+        <module>eshop-business-logic-core</module>
     </modules>
     <dependencies>
         <dependency>

@@ -1,5 +1,6 @@
 package com.eshop.business.product.handlers;
 
+import com.eshop.business.core.Handler;
 import com.eshop.business.product.requests.GetProductDetailsRequest;
 import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.models.entities.Image;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 //this currently does not handle the retrieval of reviews as reviews may be alot
 //TODO we may want to make another endpoint to fetch reviews in a pageable behaviour.
-public class GetProductDetailsHandler {
+public class GetProductDetailsHandler implements Handler<GetProductDetailsRequest, GetProductDetailsResponse> {
 
 
     private final ProductRepository productRepository;

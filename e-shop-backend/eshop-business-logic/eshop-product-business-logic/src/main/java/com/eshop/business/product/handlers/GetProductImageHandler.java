@@ -1,5 +1,6 @@
 package com.eshop.business.product.handlers;
 
+import com.eshop.business.core.Handler;
 import com.eshop.business.product.requests.GetProductImageRequest;
 import com.eshop.business.product.responses.GetProductImageResponse;
 import com.eshop.models.entities.Image;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 
-public class GetProductImageHandler {
+public class GetProductImageHandler implements Handler<GetProductImageRequest, GetProductImageResponse> {
 
     private static final Logger logger = LoggerFactory.getLogger(GetProductImageHandler.class);
     private final ImageRepository imageRepository;
