@@ -17,17 +17,12 @@
     </modules>
     <dependencies>
         <dependency>
-            <groupId>com.eshop</groupId>
-            <artifactId>eshop-user-business-logic</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>com.eshop</groupId>
-            <artifactId>eshop-product-business-logic</artifactId>
+            <artifactId>eshop-business-logic</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -1,8 +1,8 @@
 package com.eshop.business.product.handlers;
 
-import com.eshop.business.core.Handler;
-import com.eshop.business.product.requests.AddProductRequest;
+import com.eshop.business.Handler;
 import com.eshop.business.product.responses.AddProductResponse;
+import com.eshop.business.product.requests.AddProductRequest;
 import com.eshop.models.entities.*;
 import com.eshop.repositories.CategoryRepository;
 import com.eshop.repositories.ProductCategoryRepository;

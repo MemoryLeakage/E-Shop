@@ -1,6 +1,6 @@
 package com.eshop.business.product.handlers;
 
-import com.eshop.business.core.Handler;
+import com.eshop.business.Handler;
 import com.eshop.business.product.requests.GetProductDetailsRequest;
 import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.models.entities.Image;

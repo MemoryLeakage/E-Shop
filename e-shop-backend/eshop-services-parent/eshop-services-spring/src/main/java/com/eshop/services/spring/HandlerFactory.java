@@ -1,6 +1,6 @@
 package com.eshop.services.spring;
 
-import com.eshop.business.core.Handler;
+import com.eshop.business.Handler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

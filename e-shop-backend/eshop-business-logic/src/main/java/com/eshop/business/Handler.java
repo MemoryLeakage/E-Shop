@@ -1,4 +1,4 @@
-package com.eshop.business.core;
+package com.eshop.business;
 
 public interface Handler<REQUEST, RESPONSE> {
 

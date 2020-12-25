@@ -10,15 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>eshop-business-logic</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>eshop-cart-business-logic</module>
-        <module>eshop-product-business-logic</module>
-        <module>eshop-user-business-logic</module>
-        <module>eshop-business-logic-core</module>
-    </modules>
     <dependencies>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-validators</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.eshop</groupId>
             <artifactId>eshop-models</artifactId>
