@@ -7,10 +7,13 @@ import com.eshop.business.product.handlers.GetProductImageHandler;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -25,8 +28,14 @@ public class BeansSupplier {
     public AddProductHandler addProductHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
                                                ProductRepository productRepository,
                                                CategoryRepository categoryRepository,
-                                               ProductCategoryRepository productCategoryRepository) {
-        return new AddProductHandler(securityContext, productRepository, categoryRepository,productCategoryRepository);
+                                               ProductCategoryRepository productCategoryRepository,
+                                               Validator validator) {
+        return new AddProductHandler(securityContext, productRepository, categoryRepository, productCategoryRepository, validator);
+    }
+
+    @Bean
+    public Validator getValidator(){
+        return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
     @Bean
@@ -52,7 +61,7 @@ public class BeansSupplier {
 
     @Bean
     @Autowired
-    public GetProductDetailsHandler getProductDetailsHandler(ProductRepository productRepository){
+    public GetProductDetailsHandler getProductDetailsHandler(ProductRepository productRepository) {
         return new GetProductDetailsHandler(productRepository);
     }
 }

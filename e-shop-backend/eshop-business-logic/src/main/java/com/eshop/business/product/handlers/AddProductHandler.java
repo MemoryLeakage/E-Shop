@@ -8,10 +8,15 @@ import com.eshop.repositories.CategoryRepository;
 import com.eshop.repositories.ProductCategoryRepository;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
 import static com.eshop.utilities.Validators.*;
@@ -20,22 +25,39 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
 
     private static final Logger logger = LoggerFactory.getLogger(AddProductHandler.class);
 
-    private final ProductRepository productRepository;
-    private final SecurityContext securityContext;
-    private final CategoryRepository categoryRepository;
-    private final ProductCategoryRepository productCategoryRepository;
 
+    @NotNull
+    private final ProductRepository productRepository;
+    @NotNull
+    private final SecurityContext securityContext;
+    @NotNull
+    private final CategoryRepository categoryRepository;
+    @NotNull
+    private final ProductCategoryRepository productCategoryRepository;
+    private final Validator validator;
+
+    // TODO:
+    //  Implement EshopValidator
+    //  Add validation to the constructor and the handle method
+    //  Implement factory design pattern for repositories
     public AddProductHandler(SecurityContext securityContext,
-                             ProductRepository repository,
+                             ProductRepository productRepository,
                              CategoryRepository categoryRepository,
-                             ProductCategoryRepository productCategoryRepository) {
+                             ProductCategoryRepository productCategoryRepository,
+                             Validator validator) {
+        if (validator == null)
+            throw new IllegalArgumentException();
+        this.validator = validator;
+        validateArguments(securityContext, productRepository, categoryRepository, productCategoryRepository);
         logger.debug("Constructing AddProductHandler");
-        validateArguments(securityContext, repository, categoryRepository, productCategoryRepository);
         this.securityContext = securityContext;
         this.categoryRepository = categoryRepository;
         this.productCategoryRepository = productCategoryRepository;
-        this.productRepository = repository;
+        this.productRepository = productRepository;
         logger.debug("Successfully constructed AddProductHandler");
+//        Set<ConstraintViolation<AddProductHandler>> violations = validator.validate(this);
+//        if(!violations.isEmpty())
+//            throw new ConstraintViolationException(violations);
     }
 
     public AddProductResponse handle(AddProductRequest request) {

@@ -17,10 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 @Component
-@Validated
 public class ProductServiceImpl implements ProductService {
 
     private final HandlerFactory factory;
@@ -46,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional(propagation= Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, noRollbackFor = Exception.class)
     public GetProductDetailsResponse getProductDetails(GetProductDetailsRequest request) {
         return factory.getHandler(GetProductDetailsHandler.class).handle(request);
     }

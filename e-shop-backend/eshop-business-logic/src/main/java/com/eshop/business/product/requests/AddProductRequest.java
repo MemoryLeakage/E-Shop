@@ -1,8 +1,9 @@
 package com.eshop.business.product.requests;
 
 import com.eshop.validators.annotation.ListPattern;
+import jakarta.validation.constraints.*;
 
-import javax.validation.constraints.*;
+
 import java.util.List;
 
 public class AddProductRequest {

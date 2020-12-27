@@ -17,10 +17,6 @@
     </modules>
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.eshop</groupId>
             <artifactId>eshop-business-logic</artifactId>
             <version>${project.version}</version>

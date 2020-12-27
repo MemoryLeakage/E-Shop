@@ -26,10 +26,13 @@ public class GetUserInfoHandlerTest {
     @Test
     void givenNullAuthenticatedUser_whenConstructing_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new GetUserInfoHandler(null,userRepository));
+                () -> new GetUserInfoHandler(null, userRepository));
         assertEquals("security context can not be null", thrown.getMessage());
+    }
 
-        thrown = assertThrows(IllegalArgumentException.class,
+    @Test
+    void givenNullUserRepository_whenConstructing_thenThrowException(){
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> new GetUserInfoHandler(securityContext, null));
         assertEquals("user repository can not be null", thrown.getMessage());
     }

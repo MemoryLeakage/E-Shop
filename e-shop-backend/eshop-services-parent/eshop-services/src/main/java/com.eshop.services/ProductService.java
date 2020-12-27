@@ -9,11 +9,9 @@ import com.eshop.business.product.responses.AddProductResponse;
 import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.business.product.responses.GetProductImageResponse;
 
-import javax.validation.Valid;
-
 public interface ProductService {
 
-    AddProductResponse addProduct(@Valid AddProductRequest request);
+    AddProductResponse addProduct(AddProductRequest request);
 
     AddProductImagesResponse addProductImage(AddProductImagesRequest request);
 

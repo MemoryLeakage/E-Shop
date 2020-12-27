@@ -12,6 +12,8 @@ import com.eshop.repositories.CategoryRepository;
 import com.eshop.repositories.ProductCategoryRepository;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,18 +36,24 @@ public class AddProductHandlerTest {
     private CategoryRepository categoryRepository;
     @Mock
     private ProductCategoryRepository productCategoryRepository;
+    private Validator validator;
 
     private AddProductHandler productHandler;
 
     @BeforeEach
     void setUp() {
-        this.productHandler = new AddProductHandler(securityContext, productRepo, categoryRepository, productCategoryRepository);
+        validator = Validation.buildDefaultValidatorFactory().getValidator();
+        this.productHandler = new AddProductHandler(securityContext,
+                productRepo,
+                categoryRepository,
+                productCategoryRepository,
+                validator);
     }
 
     @Test
     void givenNullSecurityContext_whenConstructing_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new AddProductHandler(null, productRepo, categoryRepository, productCategoryRepository));
+                () -> new AddProductHandler(null, productRepo, categoryRepository, productCategoryRepository, validator));
         assertEquals("security context can not be null", thrown.getMessage());
 
     }
@@ -53,7 +61,7 @@ public class AddProductHandlerTest {
     @Test
     void givenNullProductRepository_whenConstructing_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new AddProductHandler(securityContext, null, categoryRepository, productCategoryRepository));
+                () -> new AddProductHandler(securityContext, null, categoryRepository, productCategoryRepository, validator));
         assertEquals("product repository can not be null", thrown.getMessage());
 
     }
@@ -61,14 +69,14 @@ public class AddProductHandlerTest {
     @Test
     void givenNullCategoryRepository_whenConstructing_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new AddProductHandler(securityContext, productRepo, null, productCategoryRepository));
+                () -> new AddProductHandler(securityContext, productRepo, null, productCategoryRepository, validator));
         assertEquals("category repository can not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullProductCategoryRepository_whenConstructing_thenThrowException() {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new AddProductHandler(securityContext, productRepo, categoryRepository, null));
+                () -> new AddProductHandler(securityContext, productRepo, categoryRepository, null, validator));
         assertEquals("product category repository can not be null", thrown.getMessage());
     }
 
@@ -116,8 +124,9 @@ public class AddProductHandlerTest {
 
     @Test
     void givenNonAuthenticatedUser_whenAddingProduct_thenThrowException() {
+        // TODO this case should not have happened, since the authorization and authentication is handled by spring security
         when(securityContext.getUser()).thenReturn(null);
-        AddProductHandler addProductHandler = new AddProductHandler(securityContext, productRepo, categoryRepository, productCategoryRepository);
+        AddProductHandler addProductHandler = new AddProductHandler(securityContext, productRepo, categoryRepository, productCategoryRepository, validator);
         IllegalStateException thrown = assertThrows(IllegalStateException.class,
                 () -> addProductHandler.handle(getValidRequestBuilder().build()));
         assertEquals("user is not authenticated", thrown.getMessage());
