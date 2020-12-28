@@ -11,11 +11,11 @@
 
     <artifactId>eshop-services-spring</artifactId>
 
-<dependencies>
-    <dependency>
-        <groupId>com.eshop</groupId>
-        <artifactId>eshop-services</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>com.eshop</groupId>
+            <artifactId>eshop-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

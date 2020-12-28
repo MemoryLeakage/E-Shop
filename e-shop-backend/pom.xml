@@ -30,6 +30,8 @@
     <properties>
         <java.version>11</java.version>
         <jakarta-validation.version>3.0.0</jakarta-validation.version>
+        <hibernate-validator.version>7.0.0.Final</hibernate-validator.version>
+        <glassfish-el.version>4.0.1</glassfish-el.version>
     </properties>
 
     <dependencies>

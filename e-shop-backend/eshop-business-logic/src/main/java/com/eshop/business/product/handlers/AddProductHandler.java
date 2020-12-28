@@ -8,15 +8,12 @@ import com.eshop.repositories.CategoryRepository;
 import com.eshop.repositories.ProductCategoryRepository;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.security.SecurityContext;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
+import com.eshop.validators.EshopValidator;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
 import static com.eshop.utilities.Validators.*;
@@ -34,7 +31,7 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
     private final CategoryRepository categoryRepository;
     @NotNull
     private final ProductCategoryRepository productCategoryRepository;
-    private final Validator validator;
+    private final EshopValidator validator;
 
     // TODO:
     //  Implement EshopValidator
@@ -44,25 +41,24 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
                              ProductRepository productRepository,
                              CategoryRepository categoryRepository,
                              ProductCategoryRepository productCategoryRepository,
-                             Validator validator) {
+                             EshopValidator validator) {
         if (validator == null)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("validator: must not be null");
         this.validator = validator;
-        validateArguments(securityContext, productRepository, categoryRepository, productCategoryRepository);
         logger.debug("Constructing AddProductHandler");
         this.securityContext = securityContext;
         this.categoryRepository = categoryRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.productRepository = productRepository;
+        validator.validate(this);
         logger.debug("Successfully constructed AddProductHandler");
-//        Set<ConstraintViolation<AddProductHandler>> violations = validator.validate(this);
-//        if(!violations.isEmpty())
-//            throw new ConstraintViolationException(violations);
     }
 
     public AddProductResponse handle(AddProductRequest request) {
         logger.debug("serving request to add product");
-        validateRequest(request);
+        if(request == null)
+            throw new IllegalArgumentException("request: must not be null");
+        validator.validate(request);
         logger.debug("Attempting to fetch current authenticated user");
         User user = securityContext.getUser();
         validateUser(user);
@@ -71,7 +67,7 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
         product = productRepository.addProduct(product);
         logger.debug("Product with product-id {} successfully added", product.getId());
 
-        List<String> categoriesIds = request.getCategoriesIds();
+        List<String> categoriesIds = request.getCategoryIds();
         List<Category> categories = categoryRepository.getCategoriesByIds(categoriesIds);
         addProductCategories(product, categories);
 
@@ -112,24 +108,5 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
             logger.error("Attempt to add a product with no authentication context.");
             throw new IllegalStateException("user is not authenticated");
         }
-    }
-
-    private void validateRequest(AddProductRequest request) {
-        validateNotNullArgument(request, "request");
-        validateNotNullArgument(request.getCategoriesIds(), "category");
-        validateNotNullArgument(request.getDescription(), "description");
-        validateNotNullArgument(request.getProductName(), "product name");
-        validateMoreThanZero(request.getAvailableQuantity(), "available quantity");
-        validateMoreThanZero(request.getPrice(), "price");
-    }
-
-    private void validateArguments(SecurityContext securityContext,
-                                   ProductRepository repository,
-                                   CategoryRepository categoryRepository,
-                                   ProductCategoryRepository productCategoryRepository) {
-        validateNotNullArgument(securityContext, "security context");
-        validateNotNullArgument(repository, "product repository");
-        validateNotNullArgument(categoryRepository, "category repository");
-        validateNotNullArgument(productCategoryRepository, "product category repository");
     }
 }

@@ -22,8 +22,8 @@ public class AddProductRequest {
     @NotEmpty
     @ListPattern(
             regex = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-            message = "{eshop.message.validation.categoriesIds}")
-    private List<String> categoriesIds;
+            message = "{eshop.message.validation.categoryIds}")
+    private List<String> categoryIds;
 
     private AddProductRequest() {
     }
@@ -44,16 +44,16 @@ public class AddProductRequest {
         return description;
     }
 
-    public List<String> getCategoriesIds() {
-        return categoriesIds;
+    public List<String> getCategoryIds() {
+        return categoryIds;
     }
 
     public static class Builder {
         private String productName;
-        private float price;
+        private double price;
         private int availableQuantity;
         private String description;
-        private List<String> categoriesIds;
+        private List<String> categoryIds;
 
 
         public Builder productName(String productName) {
@@ -61,7 +61,7 @@ public class AddProductRequest {
             return this;
         }
 
-        public Builder price(float price) {
+        public Builder price(double price) {
             this.price = price;
             return this;
         }
@@ -76,15 +76,15 @@ public class AddProductRequest {
             return this;
         }
 
-        public Builder categories(List<String> categoriesIds) {
-            this.categoriesIds = categoriesIds;
+        public Builder categories(List<String> categoryIds) {
+            this.categoryIds = categoryIds;
             return this;
         }
 
         public AddProductRequest build() {
             AddProductRequest request = new AddProductRequest();
             request.availableQuantity = this.availableQuantity;
-            request.categoriesIds = this.categoriesIds;
+            request.categoryIds = this.categoryIds;
             request.description = this.description;
             request.price = this.price;
             request.productName = this.productName;

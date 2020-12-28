@@ -7,6 +7,8 @@ import com.eshop.business.product.handlers.GetProductImageHandler;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
+import com.eshop.validators.ConstraintValidator;
+import com.eshop.validators.EshopValidator;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +31,13 @@ public class BeansSupplier {
                                                ProductRepository productRepository,
                                                CategoryRepository categoryRepository,
                                                ProductCategoryRepository productCategoryRepository,
-                                               Validator validator) {
+                                               EshopValidator validator) {
         return new AddProductHandler(securityContext, productRepository, categoryRepository, productCategoryRepository, validator);
     }
 
     @Bean
-    public Validator getValidator(){
-        return Validation.buildDefaultValidatorFactory().getValidator();
+    public EshopValidator getValidator(){
+        return new ConstraintValidator(Validation.buildDefaultValidatorFactory().getValidator());
     }
 
     @Bean
