@@ -10,7 +10,6 @@ import com.eshop.security.SecurityContext;
 import com.eshop.validators.ConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -28,15 +27,13 @@ public class BeansSupplier {
     @Bean
     @Autowired
     public AddProductHandler addProductHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
-                                               ProductRepository productRepository,
-                                               CategoryRepository categoryRepository,
-                                               ProductCategoryRepository productCategoryRepository,
+                                               ReposFactory reposFactory,
                                                EshopValidator validator) {
-        return new AddProductHandler(securityContext, productRepository, categoryRepository, productCategoryRepository, validator);
+        return new AddProductHandler(securityContext, reposFactory, validator);
     }
 
     @Bean
-    public EshopValidator getValidator(){
+    public EshopValidator getValidator() {
         return new ConstraintValidator(Validation.buildDefaultValidatorFactory().getValidator());
     }
 

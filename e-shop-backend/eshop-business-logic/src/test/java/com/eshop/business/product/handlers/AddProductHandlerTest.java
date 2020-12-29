@@ -8,15 +8,14 @@ import com.eshop.business.product.requests.AddProductRequest;
 import com.eshop.business.product.responses.AddProductResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.*;
-import com.eshop.repositories.CategoryRepository;
-import com.eshop.repositories.ProductCategoryRepository;
-import com.eshop.repositories.ProductRepository;
+import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
 import com.eshop.validators.EshopValidator;
 import com.eshop.validators.ConstraintValidator;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,59 +43,73 @@ public class AddProductHandlerTest {
     private CategoryRepository categoryRepository;
     @Mock
     private ProductCategoryRepository productCategoryRepository;
+    @Mock
+    private ReposFactory reposFactory;
 
     private AddProductHandler productHandler;
 
-    private EshopValidator validator;
+    private static EshopValidator validator;
+
+    @BeforeAll
+    static void initialize() {
+        Validator jakValidator = Validation.buildDefaultValidatorFactory().getValidator();
+        validator = new ConstraintValidator(jakValidator);
+    }
+
     @BeforeEach
     void setUp() {
-        Validator jakValidator = Validation.buildDefaultValidatorFactory().getValidator();
-        this.validator = new ConstraintValidator(jakValidator);
-        this.productHandler = new AddProductHandler(securityContext,
-                productRepo,
-                categoryRepository,
-                productCategoryRepository,
-                validator);
+        when(reposFactory.getRepository(ProductRepository.class)).thenReturn(productRepo);
+        when(reposFactory.getRepository(ProductCategoryRepository.class)).thenReturn(productCategoryRepository);
+        when(reposFactory.getRepository(CategoryRepository.class)).thenReturn(categoryRepository);
+        this.productHandler = new AddProductHandler(securityContext, reposFactory, validator);
     }
 
     @Test
     void givenNullSecurityContext_whenConstructing_thenThrowException() {
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new AddProductHandler(null, productRepo, categoryRepository, productCategoryRepository, validator));
+                () -> new AddProductHandler(null, reposFactory, validator));
         assertEquals("securityContext: must not be null", thrown.getMessage());
-
     }
 
+    @Test
+    void givenNullReposFactory_whenConstructing_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> new AddProductHandler(securityContext, null, validator));
+        assertEquals("reposFactory: must not be null", thrown.getMessage());
+    }
 
+    @Test
+    void givenNullValidator_whenConstructing_thenThrowException() {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> new AddProductHandler(securityContext, reposFactory, null));
+        assertEquals("validator: must not be null", thrown.getMessage());
+    }
 
     @Test
     void givenNullProductRepository_whenConstructing_thenThrowException() {
+        when(reposFactory.getRepository(ProductRepository.class)).thenReturn(null);
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new AddProductHandler(securityContext, null, categoryRepository, productCategoryRepository, validator));
+                () -> new AddProductHandler(securityContext, reposFactory, validator));
         assertEquals("productRepository: must not be null", thrown.getMessage());
 
     }
 
     @Test
     void givenNullCategoryRepository_whenConstructing_thenThrowException() {
+        when(reposFactory.getRepository(CategoryRepository.class)).thenReturn(null);
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new AddProductHandler(securityContext, productRepo, null, productCategoryRepository, validator));
+                () -> new AddProductHandler(securityContext, reposFactory, validator));
         assertEquals("categoryRepository: must not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullProductCategoryRepository_whenConstructing_thenThrowException() {
+        when(reposFactory.getRepository(ProductCategoryRepository.class)).thenReturn(null);
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new AddProductHandler(securityContext, productRepo, categoryRepository, null, validator));
+                () -> new AddProductHandler(securityContext, reposFactory, validator));
         assertEquals("productCategoryRepository: must not be null", thrown.getMessage());
     }
 
-    @Test
-    void givenNullValidator_whenConstructing_thenThrowException() {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new AddProductHandler(securityContext, productRepo, categoryRepository, productCategoryRepository, null));
-        assertEquals("validator: must not be null", thrown.getMessage());
-    }
 
     @Test
     void givenNullAddProductRequest_whenAddingProduct_thenThrowException() {
@@ -115,7 +128,7 @@ public class AddProductHandlerTest {
 
     @ParameterizedTest
     @MethodSource(value = {"getListArray"})
-    void givenInvalidCategoryIds_whenAddingProduct_thenThrowException(List<String> categoryIds){
+    void givenInvalidCategoryIds_whenAddingProduct_thenThrowException(List<String> categoryIds) {
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
                 () -> productHandler.handle(getValidRequestBuilder().categories(categoryIds).build()));
         assertEquals("categoryIds: invalid category-id format", thrown.getMessage());
@@ -131,8 +144,8 @@ public class AddProductHandlerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"<",">","|","\"","'"})
-    void givenInvalidDescriptionPattern_whenAddingProduct_thenThrowException(String description){
+    @ValueSource(strings = {"<", ">", "|", "\"", "'"})
+    void givenInvalidDescriptionPattern_whenAddingProduct_thenThrowException(String description) {
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
                 () -> productHandler.handle(getValidRequestBuilder().description(description).build()));
         assertEquals("description: invalid description, allowed characters [letters, numbers, spaces, special characters including \".,()\"]", thrown.getMessage());
@@ -147,15 +160,15 @@ public class AddProductHandlerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"<",">","|","\"","'"})
-    void givenInvalidProductNamePattern_whenAddingProduct_thenThrowException(String productName){
+    @ValueSource(strings = {"<", ">", "|", "\"", "'"})
+    void givenInvalidProductNamePattern_whenAddingProduct_thenThrowException(String productName) {
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
                 () -> productHandler.handle(getValidRequestBuilder().productName(productName).build()));
         assertEquals("productName: invalid productName, allowed characters [letters, numbers, spaces, special characters including \".,()\"]", thrown.getMessage());
     }
 
     @ParameterizedTest
-    @ValueSource(doubles = {0,-1})
+    @ValueSource(doubles = {0, -1})
     void givenInvalidNegativePrice_whenAddingProduct_thenThrowException(double price) {
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
                 () -> productHandler.handle(getValidRequestBuilder().price(price).build()));
@@ -167,16 +180,6 @@ public class AddProductHandlerTest {
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
                 () -> productHandler.handle(getValidRequestBuilder().availableQuantity(-10).build()));
         assertEquals("availableQuantity: must be greater than or equal to 0", thrown.getMessage());
-    }
-
-    @Test
-    void givenNonAuthenticatedUser_whenAddingProduct_thenThrowException() {
-        // TODO this case should not have happened, since the authorization and authentication is handled by spring security
-        when(securityContext.getUser()).thenReturn(null);
-        AddProductHandler addProductHandler = new AddProductHandler(securityContext, productRepo, categoryRepository, productCategoryRepository, validator);
-        IllegalStateException thrown = assertThrows(IllegalStateException.class,
-                () -> addProductHandler.handle(getValidRequestBuilder().build()));
-        assertEquals("user is not authenticated", thrown.getMessage());
     }
 
     @Test
@@ -291,7 +294,8 @@ public class AddProductHandlerTest {
                 .build();
         return product;
     }
-    private static List<List<String>> getListArray(){
-        return Arrays.asList(Collections.singletonList("123"),Collections.singletonList(null));
+
+    private static List<List<String>> getListArray() {
+        return Arrays.asList(Collections.singletonList("123"), Collections.singletonList(null));
     }
 }

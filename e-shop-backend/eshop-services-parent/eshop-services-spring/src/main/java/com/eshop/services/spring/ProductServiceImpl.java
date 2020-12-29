@@ -14,11 +14,11 @@ import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.business.product.responses.GetProductImageResponse;
 import com.eshop.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 public class ProductServiceImpl implements ProductService {
 
     private final HandlerFactory factory;

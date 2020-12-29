@@ -2,7 +2,7 @@ package com.eshop.repositories;
 
 import com.eshop.models.entities.Image;
 
-public interface ImageRepository {
+public interface ImageRepository extends EshopRepository {
 
     int getImagesCountByProductId(String productId);
 

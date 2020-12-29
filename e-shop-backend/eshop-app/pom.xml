@@ -13,12 +13,6 @@
 
     <dependencies>
         <dependency>
-
-            <groupId>com.eshop</groupId>
-            <artifactId>eshop-security-keycloak</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
@@ -26,11 +20,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.eshop</groupId>
-            <artifactId>eshop-repositories-spring</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.eshop</groupId>

@@ -7,6 +7,7 @@ import com.eshop.models.entities.*;
 import com.eshop.repositories.CategoryRepository;
 import com.eshop.repositories.ProductCategoryRepository;
 import com.eshop.repositories.ProductRepository;
+import com.eshop.repositories.ReposFactory;
 import com.eshop.security.SecurityContext;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static com.eshop.models.constants.ProductAvailabilityState.AVAILABLE;
-import static com.eshop.utilities.Validators.*;
 
 public class AddProductHandler implements Handler<AddProductRequest, AddProductResponse> {
 
@@ -33,36 +33,27 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
     private final ProductCategoryRepository productCategoryRepository;
     private final EshopValidator validator;
 
-    // TODO:
-    //  Implement EshopValidator
-    //  Add validation to the constructor and the handle method
-    //  Implement factory design pattern for repositories
-    public AddProductHandler(SecurityContext securityContext,
-                             ProductRepository productRepository,
-                             CategoryRepository categoryRepository,
-                             ProductCategoryRepository productCategoryRepository,
-                             EshopValidator validator) {
+    public AddProductHandler(SecurityContext securityContext, ReposFactory reposFactory, EshopValidator validator) {
         if (validator == null)
             throw new IllegalArgumentException("validator: must not be null");
         this.validator = validator;
-        logger.debug("Constructing AddProductHandler");
+        if (reposFactory == null)
+            throw new IllegalArgumentException("reposFactory: must not be null");
         this.securityContext = securityContext;
-        this.categoryRepository = categoryRepository;
-        this.productCategoryRepository = productCategoryRepository;
-        this.productRepository = productRepository;
+        this.categoryRepository = reposFactory.getRepository(CategoryRepository.class);
+        this.productCategoryRepository = reposFactory.getRepository(ProductCategoryRepository.class);
+        this.productRepository = reposFactory.getRepository(ProductRepository.class);
         validator.validate(this);
-        logger.debug("Successfully constructed AddProductHandler");
     }
 
     public AddProductResponse handle(AddProductRequest request) {
         logger.debug("serving request to add product");
-        if(request == null)
+        if (request == null)
             throw new IllegalArgumentException("request: must not be null");
         validator.validate(request);
-        logger.debug("Attempting to fetch current authenticated user");
+
         User user = securityContext.getUser();
-        validateUser(user);
-        logger.debug("Authenticated user: {}", user.getUsername());
+
         Product product = buildProduct(request, user);
         product = productRepository.addProduct(product);
         logger.debug("Product with product-id {} successfully added", product.getId());
@@ -86,7 +77,6 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
             ProductCategory productCategory = new ProductCategory(productCategoryId, category, product);
             productCategoryRepository.addProductCategory(productCategory);
         }
-        logger.debug("Categories are assigned successfully to the product '{}'", productId);
     }
 
     private Product buildProduct(AddProductRequest request, User user) {
@@ -101,12 +91,5 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
                 .owner(user)
                 .categories(null)
                 .build();
-    }
-
-    private void validateUser(User user) {
-        if (user == null) {
-            logger.error("Attempt to add a product with no authentication context.");
-            throw new IllegalStateException("user is not authenticated");
-        }
     }
 }
