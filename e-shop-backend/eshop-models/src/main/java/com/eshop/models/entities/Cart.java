@@ -28,6 +28,9 @@ public class Cart {
     @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY)
     private List<CartItem> cartItemList;
 
+    public Cart() {
+    }
+
     public Cart(Integer numOfItems, Double totalPrice, User user) {
         this.totalPrice = totalPrice;
         this.numOfItems = numOfItems;
