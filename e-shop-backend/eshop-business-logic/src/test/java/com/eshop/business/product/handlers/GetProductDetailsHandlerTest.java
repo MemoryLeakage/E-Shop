@@ -5,6 +5,7 @@ import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.*;
 import com.eshop.repositories.ProductRepository;
+import com.eshop.repositories.ReposFactory;
 import com.eshop.validators.ConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.ConstraintViolationException;
@@ -31,6 +32,9 @@ public class GetProductDetailsHandlerTest {
     private ProductRepository productRepository;
 
     private static EshopValidator validator;
+    @Mock
+    private ReposFactory reposFactory;
+    private GetProductDetailsHandler handler;
 
     @BeforeAll
     static void initialize(){
@@ -38,25 +42,38 @@ public class GetProductDetailsHandlerTest {
         validator = new ConstraintValidator(jakValidator);
     }
 
+    @BeforeEach
+    void setUp(){
+        when(reposFactory.getRepository(ProductRepository.class)).thenReturn(productRepository);
+        this.handler = new GetProductDetailsHandler(reposFactory, validator);
+    }
+
 
     @Test
     void givenNullValidator_whenConstructing_thenThrowException(){
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new GetProductDetailsHandler(productRepository, null));
+                () -> new GetProductDetailsHandler(reposFactory, null));
         assertEquals("validator: must not be null", thrown.getMessage());
+    }
+
+
+    @Test
+    void givenNullRepositoryFactory_whenConstructing_thenThrowException(){
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> new GetProductDetailsHandler(null, validator));
+        assertEquals("reposFactory: must not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullProductRepository_whenConstructing_thenThrowException(){
+        when(reposFactory.getRepository(ProductRepository.class)).thenReturn(null);
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new GetProductDetailsHandler(null, validator));
+                () -> new GetProductDetailsHandler(reposFactory, validator));
         assertEquals("productRepository: must not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullRequest_whenProcessing_thenThrowException(){
-        GetProductDetailsHandler handler = new GetProductDetailsHandler(productRepository, validator);
-
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> handler.handle(null));
         assertEquals("request: must not be null", thrown.getMessage());
@@ -65,8 +82,6 @@ public class GetProductDetailsHandlerTest {
 
     @Test
     void givenNullProductId_whenProcessingRequest_thenThrowException(){
-        GetProductDetailsHandler handler = new GetProductDetailsHandler(productRepository, validator);
-
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
                 () -> handler.handle(new GetProductDetailsRequest(null)));
         assertEquals("productId: must not be null", thrown.getMessage());
@@ -74,8 +89,6 @@ public class GetProductDetailsHandlerTest {
 
     @Test
     void givenInvalidProductId_whenProcessingRequest_thenThrowException(){
-        GetProductDetailsHandler handler = new GetProductDetailsHandler(productRepository, validator);
-
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
                 () -> handler.handle(new GetProductDetailsRequest("123")));
         assertEquals("productId: invalid format", thrown.getMessage());
@@ -84,7 +97,6 @@ public class GetProductDetailsHandlerTest {
 
     @Test
     void givenNonExistingProductId_whenProcessingRequest_thenThrowException(){
-        GetProductDetailsHandler handler = new GetProductDetailsHandler(productRepository, validator);
         String productId = UUID.randomUUID().toString();
         when(productRepository.getProductById(productId)).thenReturn(null);
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
@@ -94,7 +106,6 @@ public class GetProductDetailsHandlerTest {
 
     @Test
     void givenValidProductId_whenProcessingRequest_thenBehaveAsExpected(){
-        GetProductDetailsHandler handler = new GetProductDetailsHandler(productRepository, validator);
         String productId = "464998ff-0126-4d42-9f1e-0ae2801ecd86";
         User owner = buildOwner();
         List<ProductCategory> categories = getProductCategories(productId);

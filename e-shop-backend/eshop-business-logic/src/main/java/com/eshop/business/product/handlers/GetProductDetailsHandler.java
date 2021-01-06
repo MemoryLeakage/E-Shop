@@ -8,6 +8,7 @@ import com.eshop.models.entities.Image;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.ProductCategory;
 import com.eshop.repositories.ProductRepository;
+import com.eshop.repositories.ReposFactory;
 import com.eshop.utilities.Validators;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.constraints.NotNull;
@@ -21,14 +22,17 @@ public class GetProductDetailsHandler implements Handler<GetProductDetailsReques
 
     @NotNull
     private final ProductRepository productRepository;
-    private EshopValidator validator;
+    private final EshopValidator validator;
 
-    public GetProductDetailsHandler(ProductRepository productRepository, EshopValidator validator) {
+    public GetProductDetailsHandler(ReposFactory reposFactory, EshopValidator validator) {
         if (validator == null) {
             throw new IllegalArgumentException("validator: must not be null");
         }
+        if (reposFactory == null)
+            throw new IllegalArgumentException("reposFactory: must not be null");
+
         this.validator = validator;
-        this.productRepository = productRepository;
+        this.productRepository = reposFactory.getRepository(ProductRepository.class);
         validator.validate(this);
     }
 
