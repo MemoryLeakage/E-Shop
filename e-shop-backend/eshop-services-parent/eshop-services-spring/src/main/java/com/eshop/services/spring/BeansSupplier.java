@@ -2,32 +2,40 @@ package com.eshop.services.spring;
 
 import com.eshop.business.product.handlers.AddProductHandler;
 import com.eshop.business.product.handlers.AddProductImagesHandler;
+import com.eshop.business.product.handlers.GetProductDetailsHandler;
 import com.eshop.business.product.handlers.GetProductImageHandler;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
+import com.eshop.validators.ConstraintValidator;
+import com.eshop.validators.EshopValidator;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Component
+@Configuration
 public class BeansSupplier {
 
     // TODO Change this value
-    private final Path imagesPath = Paths.get("/home/abdelrahman/tmp/images");
+    private final Path imagesPath = Paths.get("/tmp");
 
     @Bean
     @Autowired
     public AddProductHandler addProductHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
-                                               ProductRepository productRepository,
-                                               CategoryRepository categoryRepository,
-                                               ProductCategoryRepository productCategoryRepository) {
-        return new AddProductHandler(securityContext, productRepository, categoryRepository,productCategoryRepository);
+                                               ReposFactory reposFactory,
+                                               EshopValidator validator) {
+        return new AddProductHandler(securityContext, reposFactory, validator);
+    }
+
+    @Bean
+    public EshopValidator getValidator() {
+        return new ConstraintValidator(Validation.buildDefaultValidatorFactory().getValidator());
     }
 
     @Bean
@@ -51,4 +59,9 @@ public class BeansSupplier {
         return new GetUserInfoHandler(securityContext, userRepository);
     }
 
+    @Bean
+    @Autowired
+    public GetProductDetailsHandler getProductDetailsHandler(ReposFactory reposFactory, EshopValidator validator) {
+        return new GetProductDetailsHandler(reposFactory, validator);
+    }
 }

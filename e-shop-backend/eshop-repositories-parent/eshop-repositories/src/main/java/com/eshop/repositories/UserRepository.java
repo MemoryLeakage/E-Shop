@@ -2,7 +2,7 @@ package com.eshop.repositories;
 
 import com.eshop.models.entities.User;
 
-public interface UserRepository {
+public interface UserRepository extends EshopRepository{
 
     boolean existsByUserName(String username);
     User addUser(User user);

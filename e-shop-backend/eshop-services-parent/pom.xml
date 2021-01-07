@@ -18,12 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>com.eshop</groupId>
-            <artifactId>eshop-user-business-logic</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.eshop</groupId>
-            <artifactId>eshop-product-business-logic</artifactId>
+            <artifactId>eshop-business-logic</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

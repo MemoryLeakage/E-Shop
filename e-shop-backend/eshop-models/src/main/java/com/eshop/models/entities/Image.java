@@ -52,6 +52,7 @@ public class Image {
         private String path;
         private String name;
         private Product product;
+        private String imageId;
 
         public Builder size(Integer size) {
             this.size = size;
@@ -73,13 +74,20 @@ public class Image {
             return this;
         }
 
+        public Builder id(String imageId) {
+            this.imageId = imageId;
+            return this;
+        }
+
         public Image build() {
             Image image = new Image();
+            image.id = this.imageId;
             image.name = this.name;
             image.path = this.path;
             image.product = this.product;
             image.size = this.size;
             return image;
         }
+
     }
 }

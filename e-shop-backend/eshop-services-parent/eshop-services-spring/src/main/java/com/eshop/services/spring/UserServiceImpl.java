@@ -4,9 +4,9 @@ import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.business.user.responses.GetUserInfoResponse;
 import com.eshop.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class UserServiceImpl implements UserService {
 
     private final GetUserInfoHandler getUserInfoHandler;

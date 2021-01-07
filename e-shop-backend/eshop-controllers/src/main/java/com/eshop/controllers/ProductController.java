@@ -2,9 +2,11 @@ package com.eshop.controllers;
 
 import com.eshop.business.product.requests.AddProductImagesRequest;
 import com.eshop.business.product.requests.AddProductRequest;
+import com.eshop.business.product.requests.GetProductDetailsRequest;
 import com.eshop.business.product.requests.GetProductImageRequest;
 import com.eshop.business.product.responses.AddProductImagesResponse;
 import com.eshop.business.product.responses.AddProductResponse;
+import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.business.product.responses.GetProductImageResponse;
 import com.eshop.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,4 +57,9 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(getProductImageResponse);
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<GetProductDetailsResponse> getProductDetails(@PathVariable String productId) {
+        GetProductDetailsResponse productDetails = productService.getProductDetails(new GetProductDetailsRequest(productId));
+        return ResponseEntity.status(HttpStatus.OK).body(productDetails);
+    }
 }
