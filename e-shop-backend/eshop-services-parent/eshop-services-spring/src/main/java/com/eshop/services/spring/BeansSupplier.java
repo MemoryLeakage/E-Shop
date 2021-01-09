@@ -11,6 +11,7 @@ import com.eshop.security.SecurityContext;
 import com.eshop.validators.ConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -61,8 +62,8 @@ public class BeansSupplier {
 
     @Bean
     @Autowired
-    public GetProductDetailsHandler getProductDetailsHandler(ProductRepository productRepository) {
-        return new GetProductDetailsHandler(productRepository);
+    public GetProductDetailsHandler getProductDetailsHandler(ReposFactory reposFactory, EshopValidator validator) {
+        return new GetProductDetailsHandler(reposFactory, validator);
     }
 
     @Bean

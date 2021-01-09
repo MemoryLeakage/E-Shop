@@ -1,6 +1,7 @@
 package com.eshop.business.product.responses;
 
 import com.eshop.models.constants.ProductAvailabilityState;
+import com.eshop.models.entities.Category;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class GetProductDetailsResponse {
     private String description;
     private String merchantName;
     private List<String> imageIds;
-    private List<String> categories;
+    private List<Category> categories;
 
     private GetProductDetailsResponse(){}
 
@@ -50,7 +51,7 @@ public class GetProductDetailsResponse {
         return imageIds;
     }
 
-    public List<String> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
@@ -63,7 +64,7 @@ public class GetProductDetailsResponse {
         private String description;
         private String merchantName;
         private List<String> imageIds;
-        private List<String> categories;
+        private List<Category> categories;
 
         public Builder setProductName(String productName) {
             this.productName = productName;
@@ -105,7 +106,7 @@ public class GetProductDetailsResponse {
             return this;
         }
 
-        public Builder setCategories(List<String> categories) {
+        public Builder setCategories(List<Category> categories) {
             this.categories = categories;
             return this;
         }
