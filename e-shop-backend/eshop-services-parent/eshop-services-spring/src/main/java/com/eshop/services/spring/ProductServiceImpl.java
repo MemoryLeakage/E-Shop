@@ -29,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+//    TODO add Transactional
     public AddProductResponse addProduct(AddProductRequest request) {
         return factory.getHandler(AddProductHandler.class).handle(request);
     }
