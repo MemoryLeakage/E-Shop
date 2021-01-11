@@ -135,7 +135,7 @@ class AddToCartHandlerTest {
         AddToCartRequest request = getValidRequest();
         request.setProductId(productId);
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class, () -> handler.handle(request));
-        assertEquals("productId: invalid product-id format", thrown.getMessage());
+        assertEquals("productId: invalid format", thrown.getMessage());
     }
 
     @ParameterizedTest
