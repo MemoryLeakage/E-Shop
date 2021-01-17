@@ -19,6 +19,20 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
         </RollingFile>
+        <RollingFile name="ErrorLog"
+                     fileName="./logs/error.log"
+                     filePattern="./logs/$${date:yyyy-MM}/error-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%d{ISO8601} %level %C{1.} [%t]: %m%n%throwable</pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
     </Appenders>
 
     <Loggers>
@@ -27,6 +41,9 @@
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Root>
+        <Logger name="com.eshop.controllers.ErrorHandlingControllerAdvice" level="INFO" additivity="false">
+            <AppenderRef ref="ErrorLog"/>
+        </Logger>
     </Loggers>
 
 </Configuration>
