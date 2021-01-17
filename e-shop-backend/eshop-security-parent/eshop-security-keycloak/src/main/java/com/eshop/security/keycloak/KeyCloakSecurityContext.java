@@ -49,8 +49,7 @@ public class KeyCloakSecurityContext implements SecurityContext {
     }
 
     private void initializeAuthentication() {
-        if (authentication == null)
-            authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication = SecurityContextHolder.getContext().getAuthentication();
     }
 
     private boolean isNotKeycloakAuthentication() {
