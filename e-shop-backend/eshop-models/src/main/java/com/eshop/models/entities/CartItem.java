@@ -42,6 +42,10 @@ public class CartItem {
         return product;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public static class Builder {
         private Integer quantity;
         private Double totalPrice;
