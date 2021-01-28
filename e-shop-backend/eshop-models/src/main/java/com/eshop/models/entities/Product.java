@@ -4,7 +4,6 @@ import com.eshop.models.constants.ProductAvailabilityState;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,7 +25,7 @@ public class Product {
     private Integer availableQuantity;
     @Column(name = "sold_quantity")
     private Integer soldQuantity;
-    @Column(name = "availabilty_state")
+    @Column(name = "availability_state")
     private ProductAvailabilityState availabilityState;
     @Column(name = "price")
     private Double price;
@@ -41,7 +40,7 @@ public class Product {
     private List<Image> images;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<CartDetails> cartDetailsList;
+    private List<CartItem> cartItemList;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<ProductCategory> categories;
@@ -100,16 +99,16 @@ public class Product {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Product)) return false;
         Product product = (Product) o;
-        return id.equals(product.id) &&
-                productName.equals(product.productName) &&
-                Objects.equals(rating, product.rating) &&
-                availableQuantity.equals(product.availableQuantity) &&
-                soldQuantity.equals(product.soldQuantity) &&
-                availabilityState == product.availabilityState &&
-                price.equals(product.price) &&
-                Objects.equals(description, product.description);
+        return Objects.equals(getId(), product.getId()) &&
+                Objects.equals(getProductName(), product.getProductName()) &&
+                Objects.equals(getRating(), product.getRating()) &&
+                Objects.equals(getAvailableQuantity(), product.getAvailableQuantity()) &&
+                Objects.equals(getSoldQuantity(), product.getSoldQuantity()) &&
+                getAvailabilityState() == product.getAvailabilityState() &&
+                Objects.equals(getPrice(), product.getPrice()) &&
+                Objects.equals(getDescription(), product.getDescription());
     }
 
     @Override

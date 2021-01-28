@@ -60,6 +60,7 @@ public class SecurityConfigs extends KeycloakWebSecurityConfigurerAdapter {
                 .permitAll()
                 .mvcMatchers(HttpMethod.GET,"/v1/products/?*").permitAll()
                 .mvcMatchers(HttpMethod.GET,"/v1/user/info").authenticated()
+                .mvcMatchers(HttpMethod.POST,"/v1/cart/item").authenticated()
                 .mvcMatchers(HttpMethod.POST,"/v1/products", "/v1/products/*/images").hasRole("MERCHANT")
                 .mvcMatchers(HttpMethod.DELETE,"/v1/products/images/*").hasRole("MERCHANT")
                 .anyRequest().denyAll()

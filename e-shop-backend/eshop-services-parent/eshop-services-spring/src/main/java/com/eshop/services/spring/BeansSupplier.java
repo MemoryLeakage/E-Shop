@@ -1,5 +1,6 @@
 package com.eshop.services.spring;
 
+import com.eshop.business.cart.handlers.AddToCartHandler;
 import com.eshop.business.product.handlers.*;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
@@ -67,5 +68,13 @@ public class BeansSupplier {
                                                     ReposFactory reposFactory,
                                                     EshopValidator validator) {
         return new DeleteImageHandler(securityContext, reposFactory, imagesPath, validator);
+    }
+
+    @Bean
+    @Autowired
+    public AddToCartHandler getAddToCartHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
+                                                ReposFactory reposFactory,
+                                                EshopValidator validator) {
+        return new AddToCartHandler(securityContext, reposFactory, validator);
     }
 }

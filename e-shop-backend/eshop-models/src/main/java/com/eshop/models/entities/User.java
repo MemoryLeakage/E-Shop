@@ -29,8 +29,7 @@ public class User {
     @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
     private List<Product> products;
 
-    @OneToOne
-    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "user")
     private Cart cart;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -66,14 +65,19 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(username, user.getUsername());
+        return Objects.equals(getId(), user.getId()) &&
+                Objects.equals(getEmail(), user.getEmail()) &&
+                Objects.equals(getUsername(), user.getUsername()) &&
+                Objects.equals(getRating(), user.getRating()) &&
+                Objects.equals(getFirstName(), user.getFirstName()) &&
+                Objects.equals(getLastName(), user.getLastName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(username);
+        return Objects.hash(getId(), getEmail(), getUsername(), getRating(), getFirstName(), getLastName());
     }
 
     public static class Builder {

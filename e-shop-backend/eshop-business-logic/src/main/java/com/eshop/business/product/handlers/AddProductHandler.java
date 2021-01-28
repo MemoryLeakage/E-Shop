@@ -58,8 +58,8 @@ public class AddProductHandler implements Handler<AddProductRequest, AddProductR
         product = productRepository.addProduct(product);
         logger.debug("Product with product-id {} successfully added", product.getId());
 
-        List<String> categoriesIds = request.getCategoryIds();
-        List<Category> categories = categoryRepository.getCategoriesByIds(categoriesIds);
+        List<String> categoryIds = request.getCategoryIds();
+        List<Category> categories = categoryRepository.getCategoriesByIds(categoryIds);
         addProductCategories(product, categories);
 
         return new AddProductResponse(product.getProductName(),
