@@ -2,6 +2,7 @@ package com.eshop.business.product.handlers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.eshop.business.exceptions.MaxImagesReachedException;
 import com.eshop.business.product.requests.AddProductImagesRequest;
 import com.eshop.business.product.responses.AddProductImagesResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
@@ -139,8 +140,7 @@ public class AddProductImagesHandlerTest {
         when(imageRepository.getImagesCountByProductId("1")).thenReturn(6);
         AddProductImagesHandler handler = new AddProductImagesHandler(securityContext, productRepository, imageRepository, imagesPath);
         AddProductImagesRequest request = getAddImageRequest(image1, image2, image1);
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> handler.handle(request));
-        assertEquals("max number of images exceeded", thrown.getMessage());
+        assertThrows(MaxImagesReachedException.class, () -> handler.handle(request));
     }
 
     @Test

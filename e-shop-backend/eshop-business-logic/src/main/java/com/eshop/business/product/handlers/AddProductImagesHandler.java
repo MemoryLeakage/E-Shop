@@ -1,6 +1,7 @@
 package com.eshop.business.product.handlers;
 
 import com.eshop.business.Handler;
+import com.eshop.business.exceptions.MaxImagesReachedException;
 import com.eshop.business.product.requests.AddProductImagesRequest;
 import com.eshop.business.product.responses.AddProductImagesResponse;
 import com.eshop.models.entities.Image;
@@ -92,7 +93,7 @@ public class AddProductImagesHandler implements Handler<AddProductImagesRequest,
         if (request.getImages().size() + numberOfImages > maxNumberOfImagesPerProduct) {
             logger.error("user {} attempted to upload more than the maximum number of images allowed.",
                     currentUser.getUsername());
-            throw new IllegalArgumentException("max number of images exceeded");
+            throw new MaxImagesReachedException();
         }
 
         Path productImagesPath = imagesPath.resolve(request.getProductId());

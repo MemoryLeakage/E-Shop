@@ -53,7 +53,7 @@ public class KeyCloakSecurityContext implements SecurityContext {
     private boolean isNotKeycloakAuthentication(Authentication authentication) {
         boolean isNotKeycloakAuth = !(authentication instanceof KeycloakAuthenticationToken);
         if(isNotKeycloakAuth)
-            logger.error("Current security context is not a keycloak context.");
+            logger.debug("Current security context is not a keycloak context or user is not authenticated.");
         return isNotKeycloakAuth;
     }
 

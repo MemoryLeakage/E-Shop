@@ -58,6 +58,7 @@ public class KeycloakSecurityConfigsTest extends KeycloakTestBase {
             return "hello";
         }
     }
+
     private static boolean testSetupIsCompleted = false;
 
 
