@@ -26,15 +26,12 @@ public class DeleteImageHandler implements Handler<DeleteImageRequest, NullType>
 
     @NotNull
     private final SecurityContext securityContext;
-    @NotNull
-    private final Path path;
     private final EshopValidator validator;
     @NotNull
     private final ImageRepository imageRepo;
 
     public DeleteImageHandler(SecurityContext securityContext,
                               ReposFactory reposFactory,
-                              Path path,
                               EshopValidator validator) {
         if (validator == null)
             throw new IllegalArgumentException("validator: must not be null");
@@ -43,7 +40,6 @@ public class DeleteImageHandler implements Handler<DeleteImageRequest, NullType>
 
         this.validator = validator;
         this.securityContext = securityContext;
-        this.path = path;
         this.imageRepo = reposFactory.getRepository(ImageRepository.class);
         validator.validate(this);
     }
