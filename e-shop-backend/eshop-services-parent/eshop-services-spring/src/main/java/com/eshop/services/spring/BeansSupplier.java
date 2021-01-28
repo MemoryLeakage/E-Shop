@@ -1,9 +1,6 @@
 package com.eshop.services.spring;
 
-import com.eshop.business.product.handlers.AddProductHandler;
-import com.eshop.business.product.handlers.AddProductImagesHandler;
-import com.eshop.business.product.handlers.GetProductDetailsHandler;
-import com.eshop.business.product.handlers.GetProductImageHandler;
+import com.eshop.business.product.handlers.*;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
@@ -62,5 +59,13 @@ public class BeansSupplier {
     @Autowired
     public GetProductDetailsHandler getProductDetailsHandler(ReposFactory reposFactory, EshopValidator validator) {
         return new GetProductDetailsHandler(reposFactory, validator);
+    }
+
+    @Bean
+    @Autowired
+    public DeleteImageHandler getDeleteImageHandler(@Qualifier("keyCloakSecurityContext") SecurityContext securityContext,
+                                                    ReposFactory reposFactory,
+                                                    EshopValidator validator) {
+        return new DeleteImageHandler(securityContext, reposFactory, imagesPath, validator);
     }
 }

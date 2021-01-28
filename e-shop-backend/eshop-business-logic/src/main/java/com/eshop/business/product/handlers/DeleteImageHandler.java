@@ -19,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DeleteImageHandler  implements Handler<DeleteImageRequest, NullType> {
+public class DeleteImageHandler implements Handler<DeleteImageRequest, NullType> {
 
 
     private static final Logger logger = LoggerFactory.getLogger(DeleteImageHandler.class);
@@ -35,10 +35,10 @@ public class DeleteImageHandler  implements Handler<DeleteImageRequest, NullType
     public DeleteImageHandler(SecurityContext securityContext,
                               ReposFactory reposFactory,
                               Path path,
-                              EshopValidator validator){
-        if(validator == null)
+                              EshopValidator validator) {
+        if (validator == null)
             throw new IllegalArgumentException("validator: must not be null");
-        if(reposFactory == null)
+        if (reposFactory == null)
             throw new IllegalArgumentException("reposFactory: must not be null");
 
         this.validator = validator;
@@ -56,10 +56,10 @@ public class DeleteImageHandler  implements Handler<DeleteImageRequest, NullType
 
         User user = securityContext.getUser();
         Image image = imageRepo.getByImageId(request.getImageId());
-        if(image == null)
+        if (image == null)
             throw new IllegalArgumentException("image does not exist");
         User owner = image.getProduct().getOwner();
-        if(!owner.getUsername().equals(user.getUsername())){
+        if (!owner.getUsername().equals(user.getUsername())) {
             logger.error("User {} attempted to delete product image with product-id={} belonging to user {}",
                     user.getUsername(),
                     image.getProduct().getId(),
@@ -68,12 +68,15 @@ public class DeleteImageHandler  implements Handler<DeleteImageRequest, NullType
         }
 
         Path imagePath = Path.of(image.getPath());
-        try {
-            Files.delete(imagePath);
-        } catch (IOException e) {
-
+        if (Files.exists(imagePath)) {
+            try {
+                Files.delete(imagePath);
+            } catch (IOException e) {
+                logger.error("error deleting image", e);
+                return null;
+            }
         }
-
+        imageRepo.removeImageById(request.getImageId());
         return null;
     }
 }

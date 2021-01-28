@@ -1,13 +1,7 @@
 package com.eshop.services;
 
-import com.eshop.business.product.requests.AddProductImagesRequest;
-import com.eshop.business.product.requests.AddProductRequest;
-import com.eshop.business.product.requests.GetProductDetailsRequest;
-import com.eshop.business.product.requests.GetProductImageRequest;
-import com.eshop.business.product.responses.AddProductImagesResponse;
-import com.eshop.business.product.responses.AddProductResponse;
-import com.eshop.business.product.responses.GetProductDetailsResponse;
-import com.eshop.business.product.responses.GetProductImageResponse;
+import com.eshop.business.product.requests.*;
+import com.eshop.business.product.responses.*;
 
 public interface ProductService {
 
@@ -18,4 +12,6 @@ public interface ProductService {
     GetProductImageResponse getProductImage(GetProductImageRequest request);
 
     GetProductDetailsResponse getProductDetails(GetProductDetailsRequest request);
+
+    void removeImage(DeleteImageRequest imageId);
 }

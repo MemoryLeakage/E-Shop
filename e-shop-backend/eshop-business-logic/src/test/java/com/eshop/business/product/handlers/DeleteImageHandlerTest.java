@@ -21,13 +21,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DeleteImageHandlerTest {
@@ -47,6 +48,9 @@ public class DeleteImageHandlerTest {
 
     private static EshopValidator validator;
     private DeleteImageHandler handler;
+    private User user;
+    private Product product;
+    private Image image;
 
     @BeforeAll
     static void initialize() {
@@ -58,6 +62,10 @@ public class DeleteImageHandlerTest {
     void setUp(){
         when(reposFactory.getRepository(ImageRepository.class)).thenReturn(imageRepository);
         this.handler = new DeleteImageHandler(securityContext, reposFactory, path, validator);
+        this.user = mock(User.class);
+        this.product = mock(Product.class);
+        this.image = mock(Image.class);
+
     }
 
     @Test
@@ -122,49 +130,47 @@ public class DeleteImageHandlerTest {
 
     @Test
     void givenAuthenticatedUserNotSameAsOwner_whenExecuting_thenThrowException(){
-        when(securityContext.getUser()).thenReturn(buildUser("user1"));
+        User anotherUser = mock(User.class);
+        when(anotherUser.getUsername()).thenReturn("user2");
+        when(securityContext.getUser()).thenReturn(anotherUser);
         String imageId = UUID.randomUUID().toString();
-        Image image = buildImage(buildProduct(buildUser("user2")));
+        setUpImageMocks();
         when(imageRepository.getByImageId(imageId)).thenReturn(image);
         assertThrows(NotOwnerException.class, ()->
                 handler.handle(new DeleteImageRequest(imageId)));
     }
 
     @Test
-    void givenValidRequest_whenHandling_thenDeleteImage(){
-
+    void givenFileDoesNotExistButExistsInDatabase_whenDeletingImage_thenRemoveFromDatabase(){
+        String imageId = UUID.randomUUID().toString();
+        setUpImageMocks();
+        when(securityContext.getUser()).thenReturn(user);
+        when(imageRepository.getByImageId(imageId)).thenReturn(image);
+        String testImage = UUID.randomUUID().toString();
+        when(image.getPath()).thenReturn(testImage);
+        handler.handle(new DeleteImageRequest(imageId));
+        verify(imageRepository, times(1)).removeImageById(imageId);
     }
 
-    private Image buildImage(Product product) {
-        return new Image.Builder()
-                .path("test")
-                .product(product)
-                .name("name")
-                .size(100)
-                .build();
+    @Test
+    void givenValidRequest_whenHandling_thenDeleteImage() throws IOException {
+        Path testImage = Path.of("./src/test/resources/delete-image-test.jpg");
+        Files.write(testImage,new byte[]{1,2,3});
+        assertTrue(Files.exists(testImage));
+        String imageId = UUID.randomUUID().toString();
+        setUpImageMocks();
+        when(securityContext.getUser()).thenReturn(user);
+        when(imageRepository.getByImageId(imageId)).thenReturn(image);
+        when(image.getPath()).thenReturn(testImage.toAbsolutePath().normalize().toString());
+        handler.handle(new DeleteImageRequest(imageId));
+        assertTrue(Files.notExists(testImage));
+        verify(imageRepository, times(1)).removeImageById(imageId);
     }
 
-    private Product buildProduct(User user) {
-        return new Product.Builder()
-                .soldQuantity(1)
-                .price(10.0)
-                .id(UUID.randomUUID().toString())
-                .rating(10f)
-                .productName("product")
-                .description("description")
-                .owner(user)
-                .availabilityState(ProductAvailabilityState.AVAILABLE)
-                .build();
-    }
-
-    private User buildUser(String username) {
-        return new User.Builder()
-                .username(username)
-                .rating(4f)
-                .lastName("lastname")
-                .email("email@test.com")
-                .firstName("firstname")
-                .build();
+    private void setUpImageMocks() {
+        when(image.getProduct()).thenReturn(product);
+        when(product.getOwner()).thenReturn(user);
+        when(user.getUsername()).thenReturn("user");
     }
 
 

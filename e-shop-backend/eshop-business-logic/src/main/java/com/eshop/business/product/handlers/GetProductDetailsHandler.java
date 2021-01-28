@@ -1,6 +1,7 @@
 package com.eshop.business.product.handlers;
 
 import com.eshop.business.Handler;
+import com.eshop.business.exceptions.ProductNotFoundException;
 import com.eshop.business.product.requests.GetProductDetailsRequest;
 import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.models.entities.Category;
@@ -42,7 +43,7 @@ public class GetProductDetailsHandler implements Handler<GetProductDetailsReques
         validator.validate(request);
         Product product = productRepository.getProductById(request.getProductId());
         if(product == null)
-            throw new IllegalArgumentException("product does not exist");
+            throw new ProductNotFoundException();
         return getProductDetailsResponse(product);
     }
 

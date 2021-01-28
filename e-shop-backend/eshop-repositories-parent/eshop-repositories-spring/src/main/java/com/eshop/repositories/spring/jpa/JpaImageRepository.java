@@ -11,4 +11,6 @@ import javax.transaction.Transactional;
 public interface JpaImageRepository extends JpaRepository<Image, String> {
 
     Image getImageById(String imageId);
+
+    int countByProductId(String productId);
 }
