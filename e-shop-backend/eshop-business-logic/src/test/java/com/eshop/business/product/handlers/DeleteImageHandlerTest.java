@@ -43,9 +43,6 @@ public class DeleteImageHandlerTest {
     @Mock
     private ImageRepository imageRepository;
 
-    @Mock
-    private Path path;
-
     private static EshopValidator validator;
     private DeleteImageHandler handler;
     private User user;
@@ -61,7 +58,7 @@ public class DeleteImageHandlerTest {
     @BeforeEach
     void setUp(){
         when(reposFactory.getRepository(ImageRepository.class)).thenReturn(imageRepository);
-        this.handler = new DeleteImageHandler(securityContext, reposFactory, path, validator);
+        this.handler = new DeleteImageHandler(securityContext, reposFactory, validator);
         this.user = mock(User.class);
         this.product = mock(Product.class);
         this.image = mock(Image.class);
@@ -71,29 +68,22 @@ public class DeleteImageHandlerTest {
     @Test
     void givenNullValidator_whenConstructing_thenThrowException(){
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new DeleteImageHandler(securityContext, reposFactory, path, null));
+                () -> new DeleteImageHandler(securityContext, reposFactory, null));
         assertEquals("validator: must not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullReposFactory_whenConstructing_thenThrowException(){
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> new DeleteImageHandler(securityContext, null, path, validator));
+                () -> new DeleteImageHandler(securityContext, null, validator));
         assertEquals("reposFactory: must not be null", thrown.getMessage());
     }
 
     @Test
     void givenNullSecurityContext_whenConstructing_thenThrowException(){
         ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new DeleteImageHandler(null, reposFactory, path, validator));
+                () -> new DeleteImageHandler(null, reposFactory, validator));
         assertEquals("securityContext: must not be null", thrown.getMessage());
-    }
-
-    @Test
-    void givenNullPath_whenConstructing_thenThrowException(){
-        ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new DeleteImageHandler(securityContext, reposFactory, null, validator));
-        assertEquals("path: must not be null", thrown.getMessage());
     }
 
     @Test
@@ -154,8 +144,7 @@ public class DeleteImageHandlerTest {
 
     @Test
     void givenValidRequest_whenHandling_thenDeleteImage() throws IOException {
-        Path testImage = Path.of("./src/test/resources/delete-image-test.jpg");
-        Files.write(testImage.toAbsolutePath().normalize(),new byte[]{1,2,3});
+        Path testImage = Files.createTempFile("delete-image-test", ".jpg");
         assertTrue(Files.exists(testImage));
         String imageId = UUID.randomUUID().toString();
         setUpImageMocks();

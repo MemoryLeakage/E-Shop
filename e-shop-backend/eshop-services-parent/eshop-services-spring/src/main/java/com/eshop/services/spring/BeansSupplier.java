@@ -67,7 +67,7 @@ public class BeansSupplier {
     public DeleteImageHandler getDeleteImageHandler(@Qualifier("keyCloakSecurityContext") SecurityContext securityContext,
                                                     ReposFactory reposFactory,
                                                     EshopValidator validator) {
-        return new DeleteImageHandler(securityContext, reposFactory, imagesPath, validator);
+        return new DeleteImageHandler(securityContext, reposFactory, validator);
     }
 
     @Bean
