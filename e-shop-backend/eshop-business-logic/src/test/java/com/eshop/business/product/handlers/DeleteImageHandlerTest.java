@@ -2,14 +2,13 @@ package com.eshop.business.product.handlers;
 
 import com.eshop.business.exceptions.NotOwnerException;
 import com.eshop.business.product.requests.DeleteImageRequest;
-import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.Image;
 import com.eshop.models.entities.Product;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.ImageRepository;
 import com.eshop.repositories.ReposFactory;
 import com.eshop.security.SecurityContext;
-import com.eshop.validators.ConstraintValidator;
+import com.eshop.validators.EshopConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
@@ -52,7 +51,7 @@ public class DeleteImageHandlerTest {
     @BeforeAll
     static void initialize() {
         Validator jakValidator = Validation.buildDefaultValidatorFactory().getValidator();
-        validator = new ConstraintValidator(jakValidator);
+        validator = new EshopConstraintValidator(jakValidator);
     }
 
     @BeforeEach

@@ -11,7 +11,7 @@ import com.eshop.models.entities.*;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
 import com.eshop.validators.EshopValidator;
-import com.eshop.validators.ConstraintValidator;
+import com.eshop.validators.EshopConstraintValidator;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -53,7 +53,7 @@ public class AddProductHandlerTest {
     @BeforeAll
     static void initialize() {
         Validator jakValidator = Validation.buildDefaultValidatorFactory().getValidator();
-        validator = new ConstraintValidator(jakValidator);
+        validator = new EshopConstraintValidator(jakValidator);
     }
 
     @BeforeEach

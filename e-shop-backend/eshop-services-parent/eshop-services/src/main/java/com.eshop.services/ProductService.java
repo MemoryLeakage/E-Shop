@@ -14,4 +14,6 @@ public interface ProductService {
     GetProductDetailsResponse getProductDetails(GetProductDetailsRequest request);
 
     void removeImage(DeleteImageRequest imageId);
+
+    GetProductsResponse getProducts(GetProductsRequest request);
 }
