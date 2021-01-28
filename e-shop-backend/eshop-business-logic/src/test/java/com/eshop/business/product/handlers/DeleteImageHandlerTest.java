@@ -155,7 +155,7 @@ public class DeleteImageHandlerTest {
     @Test
     void givenValidRequest_whenHandling_thenDeleteImage() throws IOException {
         Path testImage = Path.of("./src/test/resources/delete-image-test.jpg");
-        Files.write(testImage,new byte[]{1,2,3});
+        Files.write(testImage.toAbsolutePath().normalize(),new byte[]{1,2,3});
         assertTrue(Files.exists(testImage));
         String imageId = UUID.randomUUID().toString();
         setUpImageMocks();
