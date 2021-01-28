@@ -32,9 +32,11 @@ public class UserEventListener {
         try {
             UserEvent userEvent = mapper.readerFor(UserEvent.class).readValue(message);
             UserData userData = userEvent.getUserData();
+            String email = userData.getEmail();
+            String lowerCaseEmail = email == null ? "" : email.toLowerCase();
             if (userEvent.getEventType().equals(EventType.CREATE)) {
                 User user = new User.Builder()
-                        .email(userData.getEmail().toLowerCase())
+                        .email(lowerCaseEmail)
                         .firstName(userData.getFirstName())
                         .lastName(userData.getLastName())
                         .username(userData.getUsername().toLowerCase())
@@ -45,7 +47,7 @@ public class UserEventListener {
                 logger.debug("updating existing user {}", userData.getUsername());
                 userRepository.updatePII(userData.getFirstName(),
                         userData.getLastName(),
-                        userData.getEmail().toLowerCase(),
+                        lowerCaseEmail,
                         userData.getUsername().toLowerCase());
 
             }
