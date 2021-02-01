@@ -1,6 +1,7 @@
 package com.eshop.services.spring;
 
 import com.eshop.business.cart.handlers.AddToCartHandler;
+import com.eshop.business.cart.handlers.GetCartItemsHandler;
 import com.eshop.business.product.handlers.*;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
@@ -80,9 +81,16 @@ public class BeansSupplier {
 
     @Bean
     @Autowired
-    public GetProductsHandler getProductsHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
-                                                ReposFactory reposFactory,
-                                                EshopValidator validator) {
+    public GetCartItemsHandler getCartItemsHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
+                                                   ReposFactory reposFactory,
+                                                   EshopValidator validator) {
+        return new GetCartItemsHandler(securityContext, reposFactory, validator);
+    }
+
+    @Bean
+    @Autowired
+    public GetProductsHandler getProductsHandler(ReposFactory reposFactory,
+                                                 EshopValidator validator) {
         return new GetProductsHandler(reposFactory, validator);
     }
 }

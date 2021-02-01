@@ -62,6 +62,10 @@ public class User {
         return lastName;
     }
 
+    public Cart getCart() {
+        return cart;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
