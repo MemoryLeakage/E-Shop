@@ -2,14 +2,11 @@ package com.eshop.services.spring;
 
 import com.eshop.business.cart.handlers.AddToCartHandler;
 import com.eshop.business.cart.handlers.GetCartItemsHandler;
-import com.eshop.business.product.handlers.AddProductHandler;
-import com.eshop.business.product.handlers.AddProductImagesHandler;
-import com.eshop.business.product.handlers.GetProductDetailsHandler;
-import com.eshop.business.product.handlers.GetProductImageHandler;
+import com.eshop.business.product.handlers.*;
 import com.eshop.business.user.handlers.GetUserInfoHandler;
 import com.eshop.repositories.*;
 import com.eshop.security.SecurityContext;
-import com.eshop.validators.ConstraintValidator;
+import com.eshop.validators.EshopConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +33,7 @@ public class BeansSupplier {
 
     @Bean
     public EshopValidator getValidator() {
-        return new ConstraintValidator(Validation.buildDefaultValidatorFactory().getValidator());
+        return new EshopConstraintValidator(Validation.buildDefaultValidatorFactory().getValidator());
     }
 
     @Bean
@@ -68,6 +65,14 @@ public class BeansSupplier {
 
     @Bean
     @Autowired
+    public DeleteImageHandler getDeleteImageHandler(@Qualifier("keyCloakSecurityContext") SecurityContext securityContext,
+                                                    ReposFactory reposFactory,
+                                                    EshopValidator validator) {
+        return new DeleteImageHandler(securityContext, reposFactory, validator);
+    }
+
+    @Bean
+    @Autowired
     public AddToCartHandler getAddToCartHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
                                                 ReposFactory reposFactory,
                                                 EshopValidator validator) {
@@ -80,5 +85,12 @@ public class BeansSupplier {
                                                    ReposFactory reposFactory,
                                                    EshopValidator validator) {
         return new GetCartItemsHandler(securityContext, reposFactory, validator);
+    }
+
+    @Bean
+    @Autowired
+    public GetProductsHandler getProductsHandler(ReposFactory reposFactory,
+                                                 EshopValidator validator) {
+        return new GetProductsHandler(reposFactory, validator);
     }
 }

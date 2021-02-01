@@ -10,7 +10,6 @@ import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -24,7 +23,6 @@ public class KeyCloakSecurityContext implements SecurityContext {
 
     private final static Logger logger = LoggerFactory.getLogger(KeyCloakSecurityContext.class);
     private final KeycloakDeployment keycloakDeployment;
-    private Authentication authentication;
 
     @Autowired
     public KeyCloakSecurityContext(AdapterDeploymentContext adapterDeploymentContext) {
@@ -36,10 +34,10 @@ public class KeyCloakSecurityContext implements SecurityContext {
 
     @Override
     public User getUser() {
-        initializeAuthentication();
-        if (isNotKeycloakAuthentication())
+        Authentication authentication = getAuthentication();
+        if (isNotKeycloakAuthentication(authentication))
             return null;
-        AccessToken accessToken = getAccessToken();
+        AccessToken accessToken = getAccessToken(authentication);
         return new User.Builder()
                 .firstName(accessToken.getGivenName())
                 .lastName(accessToken.getFamilyName())
@@ -48,24 +46,23 @@ public class KeyCloakSecurityContext implements SecurityContext {
                 .build();
     }
 
-    private void initializeAuthentication() {
-        if (authentication == null)
-            authentication = SecurityContextHolder.getContext().getAuthentication();
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    private boolean isNotKeycloakAuthentication() {
+    private boolean isNotKeycloakAuthentication(Authentication authentication) {
         boolean isNotKeycloakAuth = !(authentication instanceof KeycloakAuthenticationToken);
         if(isNotKeycloakAuth)
-            logger.error("Current security context is not a keycloak context.");
+            logger.debug("Current security context is not a keycloak context or user is not authenticated.");
         return isNotKeycloakAuth;
     }
 
-    private AccessToken getAccessToken() {
-        KeycloakSecurityContext keycloakSecurityContext = getKeycloakSecurityContext();
+    private AccessToken getAccessToken(Authentication authentication) {
+        KeycloakSecurityContext keycloakSecurityContext = getKeycloakSecurityContext(authentication);
         return keycloakSecurityContext.getToken();
     }
 
-    private KeycloakSecurityContext getKeycloakSecurityContext() {
+    private KeycloakSecurityContext getKeycloakSecurityContext(Authentication authentication) {
         KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) authentication;
         return keycloakAuthenticationToken
                 .getAccount()
@@ -74,10 +71,10 @@ public class KeyCloakSecurityContext implements SecurityContext {
 
     @Override
     public Set<String> getRoles() {
-        initializeAuthentication();
-        if (isNotKeycloakAuthentication())
+        Authentication authentication = getAuthentication();
+        if (isNotKeycloakAuthentication(authentication))
             return null;
-        AccessToken accessToken = getAccessToken();
+        AccessToken accessToken = getAccessToken(authentication);
         return accessToken.getResourceAccess().get(keycloakDeployment.getResourceName()).getRoles();
     }
 }

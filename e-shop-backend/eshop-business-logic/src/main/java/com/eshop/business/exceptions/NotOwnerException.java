@@ -1,9 +1,10 @@
 package com.eshop.business.exceptions;
 
-public class ProductNotFoundException extends EshopException{
+public class NotOwnerException extends EshopException{
     private static final String MESSAGE = "Unauthorized user";
 
-    public ProductNotFoundException(){
+    public NotOwnerException(){
         super(MESSAGE);
     }
+
 }

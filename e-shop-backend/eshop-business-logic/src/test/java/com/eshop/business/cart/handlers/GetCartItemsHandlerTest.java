@@ -11,7 +11,7 @@ import com.eshop.repositories.CartItemRepository;
 import com.eshop.repositories.CartRepository;
 import com.eshop.repositories.ReposFactory;
 import com.eshop.security.SecurityContext;
-import com.eshop.validators.ConstraintValidator;
+import com.eshop.validators.EshopConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
@@ -41,8 +41,6 @@ class GetCartItemsHandlerTest {
     @Mock
     private SecurityContext securityContext;
     @Mock
-    private CartRepository cartRepository;
-    @Mock
     private CartItemRepository cartItemRepository;
     @Mock
     private ReposFactory reposFactory;
@@ -59,7 +57,7 @@ class GetCartItemsHandlerTest {
     @BeforeAll
     static void initialize() {
         Validator jakartaValidator = Validation.buildDefaultValidatorFactory().getValidator();
-        validator = new ConstraintValidator(jakartaValidator);
+        validator = new EshopConstraintValidator(jakartaValidator);
     }
 
     @BeforeEach

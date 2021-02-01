@@ -15,10 +15,9 @@ public class ImageRepositoryImpl implements ImageRepository {
         this.jpaImageRepository = jpaImageRepository;
     }
 
-//    Todo implement this method
     @Override
     public int getImagesCountByProductId(String productId) {
-        return 0;
+        return jpaImageRepository.countByProductId(productId);
     }
 
     @Override
@@ -29,5 +28,10 @@ public class ImageRepositoryImpl implements ImageRepository {
     @Override
     public Image getByImageId(String imageId) {
         return jpaImageRepository.getImageById(imageId);
+    }
+
+    @Override
+    public void removeImageById(String imageId) {
+        jpaImageRepository.deleteById(imageId);
     }
 }

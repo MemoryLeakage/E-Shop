@@ -5,12 +5,12 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.util.Set;
 
-public class ConstraintValidator implements EshopValidator {
+public class EshopConstraintValidator implements EshopValidator {
 
     private final Validator jakartaValidator;
 
 
-    public ConstraintValidator(Validator jakartaValidator){
+    public EshopConstraintValidator(Validator jakartaValidator){
         this.jakartaValidator = jakartaValidator;
     }
 

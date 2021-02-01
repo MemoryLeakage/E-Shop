@@ -1,12 +1,13 @@
 package com.eshop.business.product.handlers;
 
+import com.eshop.business.exceptions.ProductNotFoundException;
 import com.eshop.business.product.requests.GetProductDetailsRequest;
 import com.eshop.business.product.responses.GetProductDetailsResponse;
 import com.eshop.models.constants.ProductAvailabilityState;
 import com.eshop.models.entities.*;
 import com.eshop.repositories.ProductRepository;
 import com.eshop.repositories.ReposFactory;
-import com.eshop.validators.ConstraintValidator;
+import com.eshop.validators.EshopConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
@@ -39,7 +40,7 @@ public class GetProductDetailsHandlerTest {
     @BeforeAll
     static void initialize(){
         Validator jakValidator = Validation.buildDefaultValidatorFactory().getValidator();
-        validator = new ConstraintValidator(jakValidator);
+        validator = new EshopConstraintValidator(jakValidator);
     }
 
     @BeforeEach
@@ -99,9 +100,8 @@ public class GetProductDetailsHandlerTest {
     void givenNonExistingProductId_whenProcessingRequest_thenThrowException(){
         String productId = UUID.randomUUID().toString();
         when(productRepository.getProductById(productId)).thenReturn(null);
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+        assertThrows(ProductNotFoundException.class,
                 () -> handler.handle(new GetProductDetailsRequest(productId)));
-        assertEquals("product does not exist", thrown.getMessage());
     }
 
     @Test

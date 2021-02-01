@@ -96,6 +96,10 @@ public class Product {
         return images;
     }
 
+    public List<ProductReview> getProductReviews() {
+        return productReviews;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -25,6 +25,8 @@ public class UserContextProvider implements SecurityContext {
     @Override
     public User getUser() {
         User user = securityContext.getUser();
+        if(user == null)
+            throw new UnauthenticatedUserException();
         user = userRepository.getUserByUsername(user.getUsername());
         return user;
     }

@@ -1,17 +1,8 @@
 package com.eshop.services.spring;
 
-import com.eshop.business.product.handlers.AddProductHandler;
-import com.eshop.business.product.handlers.AddProductImagesHandler;
-import com.eshop.business.product.handlers.GetProductDetailsHandler;
-import com.eshop.business.product.handlers.GetProductImageHandler;
-import com.eshop.business.product.requests.AddProductImagesRequest;
-import com.eshop.business.product.requests.AddProductRequest;
-import com.eshop.business.product.requests.GetProductDetailsRequest;
-import com.eshop.business.product.requests.GetProductImageRequest;
-import com.eshop.business.product.responses.AddProductImagesResponse;
-import com.eshop.business.product.responses.AddProductResponse;
-import com.eshop.business.product.responses.GetProductDetailsResponse;
-import com.eshop.business.product.responses.GetProductImageResponse;
+import com.eshop.business.product.handlers.*;
+import com.eshop.business.product.requests.*;
+import com.eshop.business.product.responses.*;
 import com.eshop.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +26,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public AddProductImagesResponse addProductImage(AddProductImagesRequest request) {
         return factory.getHandler(AddProductImagesHandler.class).handle(request);
     }
@@ -48,5 +40,16 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true, noRollbackFor = Exception.class)
     public GetProductDetailsResponse getProductDetails(GetProductDetailsRequest request) {
         return factory.getHandler(GetProductDetailsHandler.class).handle(request);
+    }
+
+    @Override
+    public void removeImage(DeleteImageRequest request) {
+        factory.getHandler(DeleteImageHandler.class).handle(request);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, noRollbackFor = Exception.class)
+    public GetProductsResponse getProducts(GetProductsRequest request) {
+        return factory.getHandler(GetProductsHandler.class).handle(request);
     }
 }

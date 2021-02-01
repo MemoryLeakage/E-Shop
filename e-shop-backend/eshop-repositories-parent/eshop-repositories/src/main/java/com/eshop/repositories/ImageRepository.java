@@ -9,4 +9,6 @@ public interface ImageRepository extends EshopRepository {
     void addImage(Image image);
 
     Image getByImageId(String imageId);
+
+    void removeImageById(String imageId);
 }
