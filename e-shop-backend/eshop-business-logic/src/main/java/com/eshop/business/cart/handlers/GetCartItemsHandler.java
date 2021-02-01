@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 public class GetCartItemsHandler implements Handler<GetCartItemsRequest, GetCartItemsResponse> {
 
     @NotNull
-    private final CartRepository cartRepository;
-    @NotNull
     private final CartItemRepository cartItemRepository;
     @NotNull
     private final SecurityContext securityContext;
@@ -34,7 +32,6 @@ public class GetCartItemsHandler implements Handler<GetCartItemsRequest, GetCart
         if (reposFactory == null)
             throw new IllegalArgumentException("reposFactory: must not be null");
         this.validator = validator;
-        this.cartRepository = reposFactory.getRepository(CartRepository.class);
         this.cartItemRepository = reposFactory.getRepository(CartItemRepository.class);
         this.securityContext = securityContext;
         validator.validate(this);

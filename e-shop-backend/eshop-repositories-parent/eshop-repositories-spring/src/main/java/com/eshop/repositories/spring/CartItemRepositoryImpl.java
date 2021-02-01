@@ -4,6 +4,8 @@ import com.eshop.models.entities.CartItem;
 import com.eshop.repositories.CartItemRepository;
 import com.eshop.repositories.spring.jpa.JpaCartItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class CartItemRepositoryImpl implements CartItemRepository {
 
     @Override
     public List<CartItem> getCartItemsByCartId(int pageSize, int pageNumber, String cartId) {
-        return null;
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        return jpaCartItemRepository.findByCartId(cartId, pageable);
     }
 }

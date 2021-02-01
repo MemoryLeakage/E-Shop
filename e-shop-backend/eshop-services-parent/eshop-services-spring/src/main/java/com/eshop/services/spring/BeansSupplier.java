@@ -1,6 +1,7 @@
 package com.eshop.services.spring;
 
 import com.eshop.business.cart.handlers.AddToCartHandler;
+import com.eshop.business.cart.handlers.GetCartItemsHandler;
 import com.eshop.business.product.handlers.AddProductHandler;
 import com.eshop.business.product.handlers.AddProductImagesHandler;
 import com.eshop.business.product.handlers.GetProductDetailsHandler;
@@ -11,7 +12,6 @@ import com.eshop.security.SecurityContext;
 import com.eshop.validators.ConstraintValidator;
 import com.eshop.validators.EshopValidator;
 import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -72,5 +72,13 @@ public class BeansSupplier {
                                                 ReposFactory reposFactory,
                                                 EshopValidator validator) {
         return new AddToCartHandler(securityContext, reposFactory, validator);
+    }
+
+    @Bean
+    @Autowired
+    public GetCartItemsHandler getCartItemsHandler(@Qualifier("userContextProvider") SecurityContext securityContext,
+                                                   ReposFactory reposFactory,
+                                                   EshopValidator validator) {
+        return new GetCartItemsHandler(securityContext, reposFactory, validator);
     }
 }

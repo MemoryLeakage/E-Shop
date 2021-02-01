@@ -1,7 +1,11 @@
 package com.eshop.business.cart.handlers;
 
 import com.eshop.business.cart.requests.GetCartItemsRequest;
+import com.eshop.business.cart.responses.CartItemResponse;
+import com.eshop.business.cart.responses.GetCartItemsResponse;
 import com.eshop.business.exceptions.CartNotFoundException;
+import com.eshop.models.entities.Cart;
+import com.eshop.models.entities.CartItem;
 import com.eshop.models.entities.User;
 import com.eshop.repositories.CartItemRepository;
 import com.eshop.repositories.CartRepository;
@@ -21,7 +25,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +47,12 @@ class GetCartItemsHandlerTest {
     @Mock
     private ReposFactory reposFactory;
 
+    @Mock
+    private User user;
+
+    @Mock
+    private Cart cart;
+
     private static EshopValidator validator;
     private GetCartItemsHandler handler;
 
@@ -47,7 +64,6 @@ class GetCartItemsHandlerTest {
 
     @BeforeEach
     void setUp() {
-        when(reposFactory.getRepository(CartRepository.class)).thenReturn(cartRepository);
         when(reposFactory.getRepository(CartItemRepository.class)).thenReturn(cartItemRepository);
         this.handler = new GetCartItemsHandler(securityContext, reposFactory, validator);
     }
@@ -73,13 +89,6 @@ class GetCartItemsHandlerTest {
         assertEquals("securityContext: must not be null", thrown.getMessage());
     }
 
-    @Test
-    void givenNullCartRepository_whenConstructing_thenThrowException() {
-        when(reposFactory.getRepository(CartRepository.class)).thenReturn(null);
-        ConstraintViolationException thrown = assertThrows(ConstraintViolationException.class,
-                () -> new GetCartItemsHandler(securityContext, reposFactory, validator));
-        assertEquals("cartRepository: must not be null", thrown.getMessage());
-    }
 
     @Test
     void givenNullCartItemRepository_whenConstructing_thenThrowException() {
@@ -121,16 +130,50 @@ class GetCartItemsHandlerTest {
 
     @Test
     void givenUserWithNoCartFound_whenGettingCartItems_thenThrowException() {
-        when(securityContext.getUser()).thenReturn(getUserBuilder().build());
+        when(user.getCart()).thenReturn(null);
+        when(securityContext.getUser()).thenReturn(user);
         assertThrows(CartNotFoundException.class, () -> handler.handle(new GetCartItemsRequest(1, 10)));
     }
 
-    private User.Builder getUserBuilder() {
-        return new User.Builder()
-                .username("test-user")
-                .email("testUser@eshop.com")
-                .firstName("test")
-                .lastName("user")
-                .rating(0F);
+    @Test
+    void givenUserWithValidCart_whenGettingCartItems_thenReturnExpectedResponse() {
+        String id = UUID.randomUUID().toString();
+        GetCartItemsRequest request = new GetCartItemsRequest(1, 10);
+        List<CartItem> cartItems = getMockedCartItemList(5);
+        when(securityContext.getUser()).thenReturn(user);
+        when(user.getCart()).thenReturn(cart);
+        when(cart.getId()).thenReturn(id);
+        when(cartItemRepository.getCartItemsByCartId(request.getPageSize(), request.getPageNumber(), id))
+                .thenReturn(cartItems);
+        GetCartItemsResponse response = handler.handle(request);
+        List<CartItemResponse> cartItemResponseList = response.getItems();
+        List<CartItemResponse> expectedResponse = cartItems.stream().map(this::toCartItemResponse).collect(Collectors.toList());
+        assertEquals(expectedResponse, cartItemResponseList);
     }
+
+    private CartItemResponse toCartItemResponse(CartItem cartItem) {
+        return new CartItemResponse.Builder()
+                .id(cartItem.getId())
+                .quantity(cartItem.getQuantity())
+                .totalPrice(cartItem.getTotalPrice())
+                .build();
+    }
+
+    private List<CartItem> getMockedCartItemList(int size) {
+        List<CartItem> cartItemList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            cartItemList.add(getMockedCartItem());
+        }
+        return cartItemList;
+    }
+
+    private CartItem getMockedCartItem() {
+        Random random = new Random();
+        CartItem mock = mock(CartItem.class);
+        when(mock.getId()).thenReturn(UUID.randomUUID().toString());
+        when(mock.getQuantity()).thenReturn(random.nextInt());
+        when(mock.getTotalPrice()).thenReturn(random.nextDouble());
+        return mock;
+    }
+
 }
